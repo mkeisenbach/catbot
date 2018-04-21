@@ -11,7 +11,7 @@ from discord.ext import commands
 import datetime, string
 
 MSG_GYM_NOT_FOUND = " not found. Please check your spelling or use fewer words."
-
+MSG_TOO_MANY_RESULTS = 'Too many matches. Please be more specific.'
 MSG_HELP = "!whereis [gym] will return a location pin for the gym.\n\
 Examples:\n\
     !whereis Irvington Community Park\n\
@@ -20,17 +20,8 @@ Examples:\n\
 will all return\n\
 Irvington Community Park (ICP) is here http://maps.google.com/maps?q=37.522771,-121.963727"
 
-translation_table = {'loscerritos':'Los Ceritos Community Park', \
-                     'hubsprint':'Sprint - Fremont Hub', \
-                     'pacsprint':'Sprint - Pacific Commons', \
-                     'ucsprint':'Sprint - Union City', \
-                     'hdstarbucks':'Starbucks - Home Depot', \
-                     'pacstarbucks':'Starbucks - Pacific Commons', \
-                     'fountainbusinesspark':'Fountains Business Park',\
-                     'stedward':'Saint Edward Catholic Church'
-                     }
-
 gyms = {}
+aliases = {}
 
 def process_name(name):
     new_name = name.lower()
@@ -43,60 +34,70 @@ def process_name(name):
 
 def load_gyms():
     global gyms
+    global aliases
     gyms = {}
+    aliases = {}
+    
     with open('fremont_gym_addresses.csv') as gymfile:
         gymreader = csv.DictReader(gymfile, delimiter=',', quotechar='"')
         for row in gymreader:
-            gyms[process_name(row['name'])] = row
-
-def translate_name(name):
-    name = process_name(name)
-    if name in translation_table.keys():
-        return translation_table[name]
-    else:
-        return name
+            namekey = process_name(row['name']) 
+            gyms[namekey] = row
+            if len(row['alias']) > 0:
+                aliases[process_name(row['alias'])] = namekey
 
 def search_names(name):
     global gyms
     found = []
-    for gym in gyms.keys():
-        if name in gym:
-            found.append(gym)
+    for namekey in gyms:
+        if name in namekey:
+            found.append(namekey)
+    return found
+
+def search_aliases(name):
+    global aliases
+    found = []
+
+    for alias in aliases:
+        if name in alias:
+            found.append(aliases[alias])
+    return found
+
+def find_gyms(name):
+    global gyms
+    found = []
+   
+    new_name = process_name(name) 
+    if new_name in gyms.keys():
+        found = [new_name]
+    else:
+        found = search_names(new_name)
+        if len(found) == 0:
+            found = search_aliases(new_name)
+            
     return found
 
 def create_link(gym):
     LINK_BASE = 'http://maps.google.com/maps?q='
     return LINK_BASE + gyms[gym]['latitude'] + ',' + gyms[gym]['longitude'] 
 
-def get_location(name):
-    MSG_TOO_MANY_RESULTS = 'Too many matches. Please be more specific.'
-    global gyms
-    
-    found = []
-    locations = []
-    location_str = ''
-    
-    new_name = translate_name(name)
-    new_name = process_name(new_name)
-    
-    if new_name in gyms.keys():
-        found = [new_name]
-    else:
-        found = search_names(new_name)
-            
+def get_response(name):
+    found = find_gyms(name)
     num_found = len(found)
+
     if num_found == 0:
-        location_str = '"' + name + '"' + MSG_GYM_NOT_FOUND
-        print(location_str)
+        reponse = '"' + name + '"' + MSG_GYM_NOT_FOUND
+        print(reponse)
     elif num_found <= 3:
+        locations = []
         for gym in found:
             link = create_link(gym)
             locations.append(gyms[gym]['name'] + " is here " + link )
-        location_str = '\n'.join(locations)
+        reponse = '\n'.join(locations)
     else:
-        location_str = MSG_TOO_MANY_RESULTS
+        reponse = MSG_TOO_MANY_RESULTS
 
-    return location_str
+    return reponse
 
 '''
 Functions for testing locally
@@ -105,7 +106,7 @@ def test_whereis(name):
     if name == 'help':
         response = MSG_HELP
     else:
-        response = get_location(name)
+        response = get_response(name)
     print(response)
 
 def run_tests():
@@ -124,7 +125,6 @@ bot = commands.Bot(command_prefix='!')
 async def on_ready():
     print('Logged in as')
     print(bot.user.name)
-    run_tests()
 
 @bot.event
 async def on_message(message):
@@ -147,14 +147,13 @@ async def whereis(*, arg: str):
     if arg == 'help':
         response = MSG_HELP
     else:
-        response = get_location(arg)
+        response = get_response(arg)
     await bot.say(response)
 
 @bot.command()
 @commands.has_any_role('Mods', 'Developer')
 async def reload_gyms():
-    global gyms
-    gyms = load_gyms()
+    load_gyms()
     await bot.say('Gyms reloaded')
 
 if __name__ == "__main__":
