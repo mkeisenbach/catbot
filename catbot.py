@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Feb 11 20:43:38 2018
-Modified 3/28/2018
 @author: Mei Eisenbach
 """
 
@@ -129,15 +128,17 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     if bot.user.mentioned_in(message) and message.mention_everyone is False:
-        if 'thanks' in message.content.lower():
+        message_lowered = message.content.lower()
+        if 'hello' in message_lowered or 'hi' in message_lowered:
+            msg = 'Hello, {}'.format(message.author.mention)
+        elif 'thanks' in message_lowered:
             msg =  "{} You're welcome".format(message.author.mention)
-            await bot.send_message(message.channel, content = msg)
+        elif 'coming' in message_lowered or 'going' in message_lowered:
+            msg = "{} Sorry, I'm a bot and stuck in this server room.".format(message.author.mention)
+            
+        await bot.send_message(message.channel, content = msg)
     await bot.process_commands(message)
     
-@bot.command(pass_context=True)
-async def hello(ctx):
-    await bot.say('Hello, {}'.format(ctx.message.author.mention))
-
 @bot.command()
 async def echo(*, arg: str):
     await bot.say(arg)
