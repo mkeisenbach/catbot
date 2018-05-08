@@ -6,8 +6,10 @@ Created on Sun Feb 11 20:43:38 2018
 
 import os
 import csv
+#import discord
 from discord.ext import commands
-import datetime, string
+import string
+import datetime
 
 MSG_GYM_NOT_FOUND = " not found. Please check your spelling or use fewer words."
 MSG_TOO_MANY_RESULTS = 'Too many matches. Please be more specific.'
@@ -18,6 +20,9 @@ Examples:\n\
     !whereis irvington\n\
 will all return\n\
 Irvington Community Park (ICP) is here http://maps.google.com/maps?q=37.522771,-121.963727"
+
+TARGET_CHANNEL_ID = '328216542095474700'
+TARGET_CHANNEL_NAME = 'raid_alerts_only'
 
 gyms = {}
 aliases = {}
@@ -37,13 +42,17 @@ def load_gyms():
     gyms = {}
     aliases = {}
     
-    with open('fremont_gym_addresses.csv') as gymfile:
-        gymreader = csv.DictReader(gymfile, delimiter=',', quotechar='"')
-        for row in gymreader:
-            namekey = process_name(row['name']) 
-            gyms[namekey] = row
-            if len(row['alias']) > 0:
-                aliases[process_name(row['alias'])] = namekey
+    try:
+        with open('gyms.csv') as gymfile:
+            gymreader = csv.DictReader(gymfile, delimiter=',', quotechar='"')
+            for row in gymreader:
+                namekey = process_name(row['name']) 
+                gyms[namekey] = row
+                if len(row['alias']) > 0:
+                    aliases[process_name(row['alias'])] = namekey
+            return True
+    except:
+        return False
 
 def search_names(name):
     global gyms
@@ -98,6 +107,25 @@ def get_response(name):
 
     return reponse
 
+def parse_report(arg):
+    arg = arg.lower()
+    arg = arg.replace('  ', ' ')
+    return arg.split(' ', 2)
+
+def generate_raid_post(boss, time_left, gym):
+    until = datetime.datetime.now() + datetime.timedelta(minutes = int(time_left))
+    link = create_link(gym)
+    msg = "{} at {}\nuntil {} ({} mins remaining) \n{}".format(boss.title(), \
+           gyms[gym]['name'], until.strftime("%I:%M %p"), time_left, link)
+    return msg
+
+def generate_egg_post(egg_level, until_hatch,  gym):
+    hatch = datetime.datetime.now() + datetime.timedelta(minutes = int(until_hatch))
+    link = create_link(gym)
+    msg = "Level {} 🥚 at {}\nhatches at {} (in {} mins)\n{}".format(egg_level, \
+                 gyms[gym]['name'], hatch.strftime("%I:%M %p"), until_hatch, link)
+    return msg
+
 '''
 Functions for testing locally
 '''    
@@ -115,6 +143,25 @@ def run_tests():
     test_whereis('st. edward')
     test_whereis('unknown gym')
 
+def test_egg(arg):
+    (egg_level, until_hatch, gym) = parse_report(arg)
+    if not egg_level.isnumeric():
+        print('{} is not a number'.format(egg_level))
+        return
+    if not until_hatch.isnumeric():
+        print('{} is not a number'.format(until_hatch))
+        return
+    
+    found = find_gyms(gym)
+    if len(found) == 0:
+        print('Gym not found')        
+    elif len(found) == 1:
+        msg = generate_egg_post(egg_level, until_hatch, found[0])
+        print(msg)
+    else:
+        print('More than one gym matches the reported gym')
+
+
 '''
 Bot code
 '''
@@ -127,6 +174,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
+    msg = ''
     if bot.user.mentioned_in(message) and message.mention_everyone is False:
         message_lowered = message.content.lower()
         if 'hello' in message_lowered or 'hi' in message_lowered:
@@ -134,15 +182,10 @@ async def on_message(message):
         elif 'thanks' in message_lowered:
             msg =  "{} You're welcome".format(message.author.mention)
         elif 'coming' in message_lowered or 'going' in message_lowered:
-            msg = "{} Sorry, I'm a bot and stuck in this server room.".format(message.author.mention)
-            
+            msg = "{} Sorry, I'm a bot and stuck in this server room.".format(message.author.mention)    
         await bot.send_message(message.channel, content = msg)
     await bot.process_commands(message)
     
-@bot.command()
-async def echo(*, arg: str):
-    await bot.say(arg)
-
 @bot.command()
 async def whereis(*, arg: str):
     if arg == 'help':
@@ -157,11 +200,79 @@ async def reload_gyms():
     load_gyms()
     await bot.say('Gyms reloaded')
 
-if __name__ == "__main__":
-    load_gyms()
-    key = os.getenv('DiscordKey')
-    if key != None:
-        bot.run(key)
+ROLE_LEGENDARY = '341323216012181504'
+
+@bot.command()
+async def test_raid(*, arg: str):
+    TARGET_CHANNEL_ID = '340536001766227968'
+    
+    (boss, time_left, gym) = parse_report(arg)
+    if not time_left.isnumeric():
+        await bot.say('{} is not a number'.format(time_left))        
+        return
+
+    found = find_gyms(gym)
+    if len(found) == 0:
+        await bot.say('Gym not found')        
+    elif len(found) == 1:
+        msg = generate_raid_post(boss, time_left, found[0])
+        if boss == 'latios' or boss == 'latias':
+            msg = '{}\n<@& {}>'.format(msg, ROLE_LEGENDARY)
+        await bot.send_message(bot.get_channel(TARGET_CHANNEL_ID), content = msg)
+        await bot.say('Raid reported to #code_testing')
     else:
-        print('ERROR: Discord Key not found in the environment variables')
-    print(datetime.datetime.now())
+        await bot.say('More than one gym matches the reported gym')
+
+@bot.command()
+async def raid(*, arg: str):
+    (boss, time_left, gym) = parse_report(arg)
+    if not time_left.isnumeric():
+        await bot.say('{} is not a number'.format(time_left))        
+        return
+
+    found = find_gyms(gym)
+    if len(found) == 0:
+        await bot.say('Gym not found')        
+    elif len(found) == 1:
+        msg = generate_raid_post(boss, time_left, found[0])
+        if boss == 'latios' or boss == 'latias':
+            msg = '{}\n<@&{}>'.format(msg, ROLE_LEGENDARY)
+        await bot.send_message(bot.get_channel(TARGET_CHANNEL_ID), content = msg)
+        await bot.say('Raid reported to #' + TARGET_CHANNEL_NAME)
+    else:
+        await bot.say('More than one gym matches the reported gym')
+
+@bot.command()
+async def egg(*, arg: str):        
+    (egg_level, until_hatch, gym) = parse_report(arg)
+#    if not egg_level.isnumeric():
+#        await bot.say('{} is not a number'.format(egg_level))        
+#        return
+    if not until_hatch.isnumeric():
+        await bot.say('{} is not a number'.format(until_hatch))        
+        return
+    
+    found = find_gyms(gym)
+    if len(found) == 0:
+        print('Gym not found')        
+    elif len(found) == 1:
+        msg = generate_egg_post(egg_level, until_hatch, found[0])
+        if egg_level == '5':
+            msg = '{}\n<@&{}>'.format(msg, ROLE_LEGENDARY)            
+        await bot.send_message(bot.get_channel(TARGET_CHANNEL_ID), content = msg)
+        await bot.say('Egg reported to #' + TARGET_CHANNEL_NAME)
+    else:
+        await bot.say('More than one gym matches the reported gym')
+
+'''
+Main
+'''
+if __name__ == "__main__":
+    if load_gyms():
+        key = os.getenv('DiscordKey')
+        if key != None:
+            bot.run(key)
+        else:
+            print('ERROR: Discord Key not found in the environment variables')
+    else:
+        print('ERROR: Unable to load gyms')
