@@ -23,7 +23,6 @@ Examples:\n\
 will all return\n\
 Irvington Community Park (ICP) is here http://maps.google.com/maps?q=37.522771,-121.963727"
 
-REPORT_CHANNEL_ID = '328216542095474700' #raid_alerts_only
 REPORT_CHANNEL_NAME = 'raid_alerts_only'
 #report_channel = ''
 LEGENDARY_ROLE_NAME = 'LegendaryRaid'
