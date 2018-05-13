@@ -11,8 +11,10 @@ import discord.utils
 import string
 import datetime
 
-MSG_GYM_NOT_FOUND = " not found. Please check your spelling or use fewer words."
+MSG_GYM_NOT_FOUND = '"{}" not found. Please check your spelling or use fewer words.'
 MSG_TOO_MANY_RESULTS = 'Too many matches. Please be more specific.'
+MSG_REPORT_MULTIPLE_MATCHES = 'More than one gym matches "{}"'
+
 MSG_HELP = "!whereis [gym] will return a location pin for the gym.\n\
 Examples:\n\
     !whereis Irvington Community Park\n\
@@ -97,7 +99,7 @@ def get_response(name):
     num_found = len(found)
 
     if num_found == 0:
-        reponse = '"' + name + '"' + MSG_GYM_NOT_FOUND
+        reponse = MSG_GYM_NOT_FOUND.format(name)
         print(reponse)
     elif num_found <= 3:
         locations = []
@@ -223,7 +225,10 @@ async def test_raid(ctx, *, arg: str):
 
 @bot.command(pass_context=True)
 async def raid(ctx, *, arg: str):
-    global report_channel
+    report_channel = discord.utils.get(ctx.message.server.channels, name=REPORT_CHANNEL_NAME)
+    if report_channel == None:
+        print(REPORT_CHANNEL_NAME + ' channel not found')
+        return
     
     legendary_role = discord.utils.get(ctx.message.server.roles, name=LEGENDARY_ROLE_NAME)
     if legendary_role == None:
@@ -231,56 +236,57 @@ async def raid(ctx, *, arg: str):
     
     (boss, time_left, gym) = parse_report(arg)
     if not time_left.isnumeric():
-        await bot.say('{} is not a number'.format(time_left))        
+        await bot.say('"{}" is not a number. Minutes remaining should be a number'.format(time_left))        
         return
 
     found = find_gyms(gym)
     if len(found) == 0:
-        await bot.say('{} not found in list of gyms'.format(gym))        
+        await bot.say(MSG_GYM_NOT_FOUND.format(gym))        
     elif len(found) == 1:
         reporter = ctx.message.author
         msg = generate_raid_post(boss, time_left, found[0])
         msg = '{}\nreported by {}'.format(msg, reporter.mention)
         if boss == 'latias':
             msg = '{} {}'.format(legendary_role.mention, msg)
-#        await bot.send_message(report_channel, content = msg)
-#        await bot.say('Raid reported to ' + report_channel.mention)
-        await bot.send_message(bot.get_channel(REPORT_CHANNEL_ID), content = msg)
-        await bot.say('Raid reported to #' + REPORT_CHANNEL_NAME)
+        await bot.send_message(report_channel, content = msg)
+        await bot.say('Raid reported to ' + report_channel.mention)
     else:
-        await bot.say('More than one gym matches the reported gym')
+        await bot.say(MSG_REPORT_MULTIPLE_MATCHES.format(gym))
+
 
 @bot.command(pass_context=True)
 async def egg(ctx, *, arg: str):
-    global report_channel   
-    
+    report_channel = discord.utils.get(ctx.message.server.channels, name=REPORT_CHANNEL_NAME)
+    if report_channel == None:
+        print(REPORT_CHANNEL_NAME + ' channel not found')
+        return
+        
     legendary_role = discord.utils.get(ctx.message.server.roles, name=LEGENDARY_ROLE_NAME)
     if legendary_role == None:
         print('Legendary Raid role not found')
 
     (egg_level, until_hatch, gym) = parse_report(arg)
-#    if not egg_level.isnumeric():
-#        await bot.say('{} is not a number'.format(egg_level))        
-#        return
+    if not egg_level.isnumeric():
+        await bot.say('"{}" is not a number. Egg levels should be 1-5'.format(egg_level))        
+        return
+
     if not until_hatch.isnumeric():
-        await bot.say('{} is not a number'.format(until_hatch))        
+        await bot.say('"{}" is not a number. Minutes until hatch should be a number'.format(until_hatch))        
         return
     
     found = find_gyms(gym)
     if len(found) == 0:
-        await bot.say('{} not found in list of gyms'.format(gym))        
+        await bot.say(MSG_GYM_NOT_FOUND.format(gym))        
     elif len(found) == 1:
         reporter = ctx.message.author
         msg = generate_egg_post(egg_level, until_hatch, found[0])
         msg = '{}\nreported by {}'.format(msg, reporter.mention)
         if egg_level == '5':
             msg = '{} {}'.format(legendary_role.mention, msg)            
-#        await bot.send_message(report_channel, content = msg)
-#        await bot.say('Egg reported to '+ report_channel.mention)
-        await bot.send_message(bot.get_channel(REPORT_CHANNEL_ID), content = msg)
-        await bot.say('Egg reported to #' + REPORT_CHANNEL_NAME)
+        await bot.send_message(report_channel, content = msg)
+        await bot.say('Egg reported to '+ report_channel.mention)
     else:
-        await bot.say('More than one gym matches {}'.format(gym))
+        await bot.say(MSG_REPORT_MULTIPLE_MATCHES.format(gym))
 
 #@bot.command(pass_context=True)
 #@commands.has_any_role('Mods', 'Developer')
