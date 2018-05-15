@@ -14,6 +14,7 @@ import datetime
 MSG_GYM_NOT_FOUND = '"{}" not found. Please check your spelling or use fewer words.'
 MSG_TOO_MANY_RESULTS = 'Too many matches. Please be more specific.'
 MSG_REPORT_MULTIPLE_MATCHES = 'More than one gym matches "{}"'
+MSG_LEGENDARY_ROLE_MISSING = 'Legendary Raid role not found'
 
 MSG_HELP = "!whereis [gym] will return a location pin for the gym.\n\
 Examples:\n\
@@ -24,9 +25,7 @@ will all return\n\
 Irvington Community Park (ICP) is here http://maps.google.com/maps?q=37.522771,-121.963727"
 
 REPORT_CHANNEL_NAME = 'raid_alerts_only'
-#report_channel = ''
 LEGENDARY_ROLE_NAME = 'LegendaryRaid'
-legendary_role = ''
 
 gyms = {}
 aliases = {}
@@ -162,6 +161,7 @@ async def on_ready():
     print(bot.user.name)
     
     print('Report channel name: {}'.format(REPORT_CHANNEL_NAME))
+    print('Legendary Role: {}'.format(LEGENDARY_ROLE_NAME))
     
 @bot.event
 async def on_message(message):
@@ -192,37 +192,6 @@ async def reload_gyms():
     await bot.say('Gyms reloaded')
 
 @bot.command(pass_context=True)
-async def test_raid(ctx, *, arg: str):
-    report_channel = discord.utils.get(ctx.message.server.channels, name=REPORT_CHANNEL_NAME)
-    if report_channel == None:
-        print(REPORT_CHANNEL_NAME + ' channel not found')
-        return
-    
-    LEGENDARY_ROLE_NAME = 'Test'
-    legendary_role = discord.utils.get(ctx.message.server.roles, name=LEGENDARY_ROLE_NAME)
-    if legendary_role == None:
-        print('Legendary Raid role not found')
-    
-    (boss, time_left, gym) = parse_report(arg)
-    if not time_left.isnumeric():
-        await bot.say('{} is not a number'.format(time_left))        
-        return
-
-    found = find_gyms(gym)
-    if len(found) == 0:
-        await bot.say('Gym not found')        
-    elif len(found) == 1:
-        reporter = ctx.message.author
-        msg = generate_raid_post(boss, time_left, found[0])
-        msg = '{}\nreported by {}'.format(msg, reporter.mention)
-        if boss == 'latias':
-            msg = '{} {}'.format(legendary_role.mention, msg)
-        await bot.send_message(report_channel, content = msg)
-        await bot.say('Raid reported to ' + report_channel.mention)
-    else:
-        await bot.say('More than one gym matches the reported gym')
-
-@bot.command(pass_context=True)
 async def raid(ctx, *, arg: str):
     report_channel = discord.utils.get(ctx.message.server.channels, name=REPORT_CHANNEL_NAME)
     if report_channel == None:
@@ -231,9 +200,13 @@ async def raid(ctx, *, arg: str):
     
     legendary_role = discord.utils.get(ctx.message.server.roles, name=LEGENDARY_ROLE_NAME)
     if legendary_role == None:
-        print('Legendary Raid role not found')
+        print(MSG_LEGENDARY_ROLE_MISSING)
     
     (boss, time_left, gym) = parse_report(arg)
+    if boss.isnumeric():
+        await bot.say('"{}" is not a raid boss.'.format(boss))
+        return
+    
     if not time_left.isnumeric():
         await bot.say('"{}" is not a number. Minutes remaining should be a number'.format(time_left))        
         return
@@ -262,13 +235,16 @@ async def egg(ctx, *, arg: str):
         
     legendary_role = discord.utils.get(ctx.message.server.roles, name=LEGENDARY_ROLE_NAME)
     if legendary_role == None:
-        print('Legendary Raid role not found')
+        print(MSG_LEGENDARY_ROLE_MISSING)
 
     (egg_level, until_hatch, gym) = parse_report(arg)
     if not egg_level.isnumeric():
         await bot.say('"{}" is not a number. Egg levels should be 1-5'.format(egg_level))        
         return
-
+    if int(egg_level) < 1 or int(egg_level) > 5:
+        await bot.say('"{}" is not valid. Egg levels should be 1-5'.format(egg_level))        
+        return        
+    
     if not until_hatch.isnumeric():
         await bot.say('"{}" is not a number. Minutes until hatch should be a number'.format(until_hatch))        
         return
@@ -286,13 +262,6 @@ async def egg(ctx, *, arg: str):
         await bot.say('Egg reported to '+ report_channel.mention)
     else:
         await bot.say(MSG_REPORT_MULTIPLE_MATCHES.format(gym))
-
-#@bot.command(pass_context=True)
-#@commands.has_any_role('Mods', 'Developer')
-#async def get_roles(ctx):
-#    roles = sorted(ctx.message.server.roles)
-#    msg = '\n'.join(str(role) for role in roles)
-#    await bot.say(msg)
     
 '''
 Main
