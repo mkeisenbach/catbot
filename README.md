@@ -9,7 +9,7 @@ Catbot has the following commands:
 
 The gyms are read in from gyms.csv which has the following fields (at minimum):
 - name: the name of the gym (must be unique)
-- alias: an alias for the gym (also must be unique; you cannot have the same alias for two different gyms)
+- alias: an alias for the gym (can be blank but must be unique if present; you cannot have the same alias for two different gyms)
 - latitude
 - longitude
 
