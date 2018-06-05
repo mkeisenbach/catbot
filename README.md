@@ -14,6 +14,6 @@ The gyms are read in from gyms.csv which has the following fields (at minimum):
 - latitude
 - longitude
 
-Criteria for rare Pokemon are read from rare_mons.csv.
-
 Name matching is case, space, and punctuation insensitive and will do partial matches. When searching for a gym, both the name and alias fields are searched.
+
+Criteria for rare Pokemon are read from rare_mons.csv.
