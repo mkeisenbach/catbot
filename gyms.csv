@@ -9,12 +9,12 @@ a6d6138b4719455498df0dc2c702b60c.16,,ACL Administration Sign,37.549859,-121.9721
 88cd91e4fd0745d1999c2bca9c131547.16,,Acrobats #7 (Panda Express),37.503626,-121.975677,4342 Auto Mall Pkwy, Fremont,CA,94538, USA
 485e226fb9ce4d16bd3222b30432d689.16,,Al Masjid Al Jamea,37.580961,-122.054824,4084-4106 Lowry Rd, Fremont,CA,94555, USA
 dc335758727f424a91bea324c2bb06d6.16,,Alameda Creek Ponding Area,37.55182,-122.085295,Bayview Trail, Fremont,CA,94555, USA
-1edc9f97196b4f1a8f754adc3996f807.16,,Alameda Creek regional Trail,37.578296,-122.026085,Alameda Creek Trail, Union City,CA,, USA
+1edc9f97196b4f1a8f754adc3996f807.16,,Alameda Creek regional Trail,37.578296,-122.026085,Alameda Creek Trail, Union City,CA,94555, USA
 1b5262c3ce874e25bf1f508514c66f85.16,,Alameda Creek Regional Trail Niles Staging Area,37.579127,-121.966399,600-722 Old Canyon Rd, Fremont,CA,94536, USA
 45dcebbc05dd480d8b225566d6ec8a9a.16,,Alameda Creek Regional Trailhead,37.566184,-122.070277,34992 Eastin Ct, Union City,CA,94587, USA
 780395226f544946b5752cf6dac34b24.16,,Alta Playground,37.539787,-122.007558,38334-38350 Alta Dr, Fremont,CA,94536, USA
 71df1f7ddc6f443aacc670c1667f494b.16,,Ancient Historic Mural,37.604357,-122.018573,33503 Mission Blvd, Union City,CA,94587, USA
-d30076fbc6a2472189c04dfc92955a92.16,,Anderson Memorial Sculpture,37.548052,-121.973889,3140 Kearney St, Fremont,CA,94538, USA
+d30076fbc6a2472189c04dfc92955a92.16,,Anderson Memorial Sculpture (PAMF),37.548052,-121.973889,3140 Kearney St, Fremont,CA,94538, USA
 30bb0c8577d044fca2c1341d13377bd6.16,,Apay Trail Marker,37.547278,-122.08983,Meadowlark Trail, Fremont,CA,94555, USA
 a52fa28db7894a6a861acbe3313e56c4.16,,Aqua Adventure,37.542389,-121.960635,40500 Paseo Padre Pkwy, Fremont,CA,94538, USA
 121b08e6c2394022ba437a779bf8fbff.16,,Aqua Caliente,37.470516,-121.872544,Agua Caliente Trail, Fremont,CA,94539, USA
@@ -128,7 +128,7 @@ d878d2dd64674dc893d65da62df28469.16,,Garden of Hope,37.612031,-122.023229,Chapel
 1800e24e2b81427cbc2e72d2d984c036.12,,Golden Gate Railroad Museum,37.59764,-121.92039,5550 Niles Canyon Rd, Fremont,CA,94536, USA
 7ea2b3ed71d44daeb3165eb4e81e6253.16,,Golden Gate Slide (Kennedy Park),37.592636,-122.021005,34007 12th St, Union City,CA,94587, USA
 594bf5847e0846cda35e1f7af5f0e816.16,,Golden Heron West,37.499154,-121.982381,44001-44031 Nobel Dr, Fremont,CA,94538, USA
-95e0fc1ff2a6451f8af2e32ef8e55af9.16,,Guamanian Latte Stone Mural,37.589115,-122.070467,4123 Dyer St, Union City,CA,94587, USA
+95e0fc1ff2a6451f8af2e32ef8e55af9.16,,Guamanian Latte Stone Mural (Elite Bakery),37.589115,-122.070467,4123 Dyer St, Union City,CA,94587, USA
 8c8cfd8745bb4281b6035c555e9fb388.16,,Haller Pharmacy Tile Mural,37.557978,-122.007078,4001-4023 Peralta Blvd, Fremont,CA,94536, USA
 d79893f030574ea69489964e26a738e6.11,,Handstand (Five Guys),37.505332,-121.969551,43518 Christy St, Fremont,CA,94538, USA
 a260ab101dd340af99586a5e46c42824.12,,Harmony of Shape,37.554821,-121.982939,2982-3098 Mowry Ave, Fremont,CA,94538, USA
@@ -292,7 +292,7 @@ fc430e25ad6b45b094250bc637f4e951.16,,Tri - Ced Trees Mural,37.596202,-122.034298
 8897c1e191fd498aa0b11de679fa747f.11,,UC Sports Center,37.593792,-122.080558,31224 Union City Blvd, Union City,CA,94587, USA
 122f927fbd1a41e1b79c34dd60f2c476.16,,Union City Apostolic Church,37.591125,-122.034811,33600 Alvarado-Niles Rd, Union City,CA,94587, USA
 be0a1ef42a834e3d8f680a837210c6f7.16,,Union City Intertidal Zone,37.564728,-122.069173,472 Alameda Creek Trail, Fremont,CA,94555, USA
-76cdf47a87684f76ace04cfe00895a80.16,,Union City Post Office,37.592891,-122.041344,33210-33288 Alvarado-Niles Rd, Union City,CA,94587, USA
+76cdf47a87684f76ace04cfe00895a80.16,UC Post Office,Union City Post Office,37.592891,-122.041344,33210-33288 Alvarado-Niles Rd, Union City,CA,94587, USA
 bb026c5c38024bbba50fd015304c1710.16,,Union City Trail Entrance,37.589483,-122.083113,31339-31379 Dorado Dr, Union City,CA,94587, USA
 15e61240fdc9429bbe6d1975af2591ea.16,,Union City Trail Entry (Alvarado Blvd),37.591823,-122.08462,4501-4541 Alvarado Blvd, Union City,CA,94587, USA
 33e74ca92c1d4ac9b0290e3d9d1aec90.16,,Union City Trail Entry (Pacific St),37.596153,-122.030418,33498-33380 Lewis Ave, Union City,CA,94587, USA
@@ -311,10 +311,11 @@ fb71d94f77444c23ade07f7496587648.16,Warbler Park,Warbler Pocket Park,37.581835,-
 938b05533fb4418c8df7d27d09892f8a.16,,Warm Springs Cabana Clubhouse,37.474264,-121.919036,251 Goldenrain Ave, Fremont,CA,94539, USA
 f8bcb4c6ad864f68b555486bb15e782a.16,,Warm Springs Fountain,37.481815,-121.943636,3481 W Warren Ave, Fremont,CA,94538, USA
 2cfbb7bd15924ffba20a8d466d77c0ea.16,,Warm Springs Park Information Board,37.485146,-121.921441,47328 Warm Springs Blvd, Fremont,CA,94539, USA
-a818cd6f88d440a4b78413d55ec1d4e6.16,,Washington Township Historical Society Plaque,37.548226,-121.965262,1 Sailway Dr, Fremont,CA,94538, USA
+a818cd6f88d440a4b78413d55ec1d4e6.16,,Washington Township Historical Society Plaque (Boathouse),37.548226,-121.965262,1 Sailway Dr, Fremont,CA,94538, USA
 200779c0d4704b6bb44f02855fc1e815.16,,Water is Life Mural,37.569708,-121.98831,Alameda Creek Trail, Fremont,CA,94536, USA
 eb90983e462042519cc4659546185e10.16,,Watkin's Hall established 1889,37.529221,-122.040698,7584-7598 Thornton Ave, Newark,CA,94560, USA
 49af5e91d79b47a1864d0e88f79b32cd.16,,Welcome to Ardenwood,37.557831,-122.0489,34600 Ardenwood Blvd, Fremont,CA,94555, USA
 3ea6a86378d245d38449c9f794abaccf.16,,Westridge Park West,37.56369,-122.02204,35998-36076 Perkins St, Fremont,CA,94536, USA
 990249dc198043fc8e3d236a0c22a9cd.16,,William Cann Memorial Park,37.589651,-122.047155,33000-33004 Marsh Hawk Rd, Union City,CA,94587, USA
 50b942b0b90f48bebaa2135bcfabc012.16,,William Cann Memorial Redwood Grove,37.589039,-122.045918,33044 Marsh Hawk Rd, Union City,CA,94587, USA
+GatewaySeminary,,Gateway Seminary,37.566808,-121.963088,38891 Mission Blvd,Fremont,CA,94536,USA

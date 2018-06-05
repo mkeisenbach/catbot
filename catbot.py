@@ -26,9 +26,12 @@ Irvington Community Park (ICP) is here http://maps.google.com/maps?q=37.522771,-
 
 REPORT_CHANNEL_NAME = 'raid_alerts_only'
 LEGENDARY_ROLE_NAME = 'LegendaryRaid'
+RARES_ALERT_CHANNEL_NAME = 'rare_mon_alerts_only'
+RARES_REPORT_CHANNEL_NAME = 'rare_mon_reports'
 
 gyms = {}
 aliases = {}
+rare_mons = {}
 
 def process_name(name):
     new_name = name.lower()
@@ -53,6 +56,18 @@ def load_gyms():
                 gyms[namekey] = row
                 if len(row['alias']) > 0:
                     aliases[process_name(row['alias'])] = namekey
+            return True
+    except:
+        return False
+
+def load_rare_mons():
+    global rare_mons
+    
+    try:
+        with open('rare_mons.csv') as monsfile:
+            reader = csv.DictReader(monsfile, delimiter=',', quotechar='"')
+            for row in reader:
+                rare_mons[row['Name'].lower()] = int(row['Min IV'])
             return True
     except:
         return False
@@ -163,6 +178,9 @@ async def on_ready():
     print('Report channel name: {}'.format(REPORT_CHANNEL_NAME))
     print('Legendary Role: {}'.format(LEGENDARY_ROLE_NAME))
     
+    print('Rares Report channel name: {}'.format(RARES_REPORT_CHANNEL_NAME))
+    
+    
 @bot.event
 async def on_message(message):
     msg = ''
@@ -218,7 +236,11 @@ async def raid(ctx, *, arg: str):
         reporter = ctx.message.author
         msg = generate_raid_post(boss, time_left, found[0])
         msg = '{}\nreported by {}'.format(msg, reporter.mention)
-        if boss == 'latias':
+
+        if found[0] == process_name('Country Way , Fremont'):
+            msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
+
+        if boss == 'latias' or boss == 'ho-oh':
             msg = '{} {}'.format(legendary_role.mention, msg)
         await bot.send_message(report_channel, content = msg)
         await bot.say('Raid reported to ' + report_channel.mention)
@@ -256,22 +278,68 @@ async def egg(ctx, *, arg: str):
         reporter = ctx.message.author
         msg = generate_egg_post(egg_level, until_hatch, found[0])
         msg = '{}\nreported by {}'.format(msg, reporter.mention)
+
+        if found[0] == process_name('Country Way , Fremont'):
+            msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
+
         if egg_level == '5':
             msg = '{} {}'.format(legendary_role.mention, msg)            
         await bot.send_message(report_channel, content = msg)
         await bot.say('Egg reported to '+ report_channel.mention)
     else:
         await bot.say(MSG_REPORT_MULTIPLE_MATCHES.format(gym))
+
+def is_rare(name, iv):
+    iv = int(iv)
+    if iv == 100:
+        return True
+    if name in rare_mons.keys():
+        if iv >= rare_mons[name]:
+            return True
+    return False
+
+@bot.command(pass_context=True)    
+async def wild(ctx, *, arg: str):
+    args = arg.split(' ', 2)
+    if len(args) < 3:    
+        await bot.say("Catbot is not a service of the NSA and doesn't know exactly where you are. Please provide a location pin.")
+        return
     
+    (name, iv, link) = args
+    name = name.lower()
+
+    if not iv.isnumeric():
+        await bot.say('"{}" is not a number. IVs should be 0-100'.format(iv))
+        return
+    
+    if is_rare(name, iv):
+        report_channel = discord.utils.get(ctx.message.server.channels, name=RARES_ALERT_CHANNEL_NAME)
+        if report_channel == None:
+            print(RARES_ALERT_CHANNEL_NAME + ' channel not found')
+            return
+        
+        msg = '{} {}% IV\n{}\nreported by {}'.format(name.title(), iv, link, ctx.message.author.mention)
+        await bot.send_message(report_channel, msg)
+        await bot.say('Rare Pokemon reported to ' + report_channel.mention)
+
+    else:
+        await bot.say("Thanks for the report. Not quite a rare mon, but someone will appreciate it.")
+            
 '''
 Main
 '''
 if __name__ == "__main__":
-    if load_gyms():
-        key = os.getenv('DiscordKey')
-        if key != None:
-            bot.run(key)
-        else:
-            print('ERROR: Discord Key not found in the environment variables')
-    else:
+    if not load_gyms():
         print('ERROR: Unable to load gyms')
+        exit()
+
+    if not load_rare_mons():
+        print('ERROR: Unable to load rare mons')
+        exit()        
+
+    key = os.getenv('DiscordKey')
+    if key == None:
+        print('ERROR: Discord Key not found in the environment variables')
+        exit()
+
+    bot.run(key)
