@@ -240,7 +240,7 @@ async def raid(ctx, *, arg: str):
         if found[0] == process_name('Country Way , Fremont'):
             msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
 
-        if boss == 'latias' or boss == 'ho-oh':
+        if boss == 'kyogre' or boss == 'ho-oh':
             msg = '{} {}'.format(legendary_role.mention, msg)
         await bot.send_message(report_channel, content = msg)
         await bot.say('Raid reported to ' + report_channel.mention)
