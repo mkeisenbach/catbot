@@ -36,6 +36,8 @@ rare_mons = {}
 def process_name(name):
     new_name = name.lower()
 
+    new_name = new_name.replace('’', "'")
+
     table = str.maketrans({key: None for key in string.punctuation})
     new_name = new_name.translate(table) 
 
@@ -133,7 +135,11 @@ def parse_report(arg):
 def generate_raid_post(boss, time_left, gym):
     until = datetime.datetime.now() + datetime.timedelta(minutes = int(time_left))
     link = create_link(gym)
-    msg = "{} at {}\n{}\nuntil {} ({} mins remaining)".format(boss.title(), gyms[gym]['name'], 
+    ex = ''
+    if gyms[gym]['ex'] == '1':
+        ex = ' 🎫'
+    msg = "{} at {}\n{}\nuntil {} ({} mins remaining)".format(boss.title(), 
+           gyms[gym]['name'] + ex, 
            link,
            until.strftime("%I:%M %p"), 
            time_left)
@@ -142,7 +148,11 @@ def generate_raid_post(boss, time_left, gym):
 def generate_egg_post(egg_level, until_hatch,  gym):
     hatch = datetime.datetime.now() + datetime.timedelta(minutes = int(until_hatch))
     link = create_link(gym)
-    msg = "Level {} 🥚 at {}\n{}\nhatches at {} (in {} mins)".format(egg_level, gyms[gym]['name'], 
+    ex = ''
+    if gyms[gym]['ex'] == '1':
+        ex = ' 🎫'
+    msg = "Level {} 🥚 at {}\n{}\nhatches at {} (in {} mins)".format(egg_level, 
+                 gyms[gym]['name'] + ex, 
                  link,
                  hatch.strftime("%I:%M %p"), 
                  until_hatch)
