@@ -250,7 +250,7 @@ async def raid(ctx, *, arg: str):
         if found[0] == process_name('Country Way , Fremont'):
             msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
 
-        if boss == 'kyogre' or boss == 'ho-oh':
+        if boss == 'kyogre' or boss == 'regice':
             msg = '{} {}'.format(legendary_role.mention, msg)
         await bot.send_message(report_channel, content = msg)
         await bot.say('Raid reported to ' + report_channel.mention)
@@ -310,9 +310,13 @@ def is_rare(name, iv):
 
 @bot.command(pass_context=True)    
 async def wild(ctx, *, arg: str):
-    args = arg.split(' ', 2)
-    if len(args) < 3:    
-        await bot.say("Catbot is not a service of the NSA and doesn't know exactly where you are. Please provide a location pin.")
+    args = arg.split(None, 2) # split on whitespace
+    if len(args) < 3:
+        if not args[1].isnumeric():
+            msg = 'Please provide the IV. IVs should be 0-100'
+        else:
+            msg = "Catbot is not a service of the NSA and doesn't know exactly where you are. Please provide a location pin."
+        await bot.say(msg)
         return
     
     (name, iv, link) = args

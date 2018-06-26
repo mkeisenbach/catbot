@@ -20,7 +20,7 @@ a52fa28db7894a6a861acbe3313e56c4.16,,Aqua Adventure,37.542389,-121.960635,40500 
 121b08e6c2394022ba437a779bf8fbff.16,,Aqua Caliente,37.470516,-121.872544,Agua Caliente Trail, Fremont,CA,94539, USA,,0
 6fe1f3ca18574ffaadf339baf019a678.12,,Ardenwood Historic Farm / Geor,37.556371,-122.051008,CA-84, Newark,CA,94560, USA,,0
 ff7e99ba577b4f24803d6b2096bd2fd2.16,,Ardenwood Regional Preserve,37.552997,-122.053832,34800-34838 Ardenwood Blvd, Fremont,CA,94555, USA,,0
-c3b07b8328054f11bc5d3b594087d79a.16,,Armed Services Plaque,37.591699,-122.020383,1201-1333 Decoto Rd, Union City,CA,94587, USA,,0
+c3b07b8328054f11bc5d3b594087d79a.16,,Armed Services Plaque,37.591699,-122.020383,1201-1333 Decoto Rd, Union City,CA,94587, USA,ArmedServices,1
 0279590f8b664ab3896a236f786f3828.16,,Arroyo Park,37.581496,-122.013989,Perry Rd, Union City,CA,94587, USA,,0
 6dec15668b48455f900294c859042353.16,,Arroyo Park Sign,37.581891,-121.992432,36223-36249 Mission Blvd, Fremont,CA,94536, USA,,0
 91157af40e55472d85f0b435eca7c023.16,,Bald Eagles,37.592172,-122.001718,300-398 Veneto Ave, Union City,CA,94587, USA,,0
@@ -40,7 +40,7 @@ ac18ace39a554925b0e2f4fb40ef89b0.16,,Brook Area 2,37.545525,-121.962265,40200-40
 21b378aa633b4d28a6abd10e6286be83.16,,Brookvale Chateau Fountain,37.564193,-122.019478,36136 Fremont Blvd, Fremont,CA,94536, USA,,0
 b7326d62ae754a72ab2bdf1726ae0c3c.16,,Brown Temple Church of God,37.596427,-122.022905,1101-1111 H St, Union City,CA,94587, USA,,0
 a873f7eb785449558c1de63c14588c9e.12,,Buddhanusorn Thai Temple,37.581345,-121.995621,36054 Niles Blvd, Fremont,CA,94536, USA,,0
-f69886cbc50a400884f4b82207026776.16,,Buyington Park Frog (Byington),37.536792,-122.021899,5705 Byington Dr, Newark,CA,94560, USA,ByingtonFrog,1
+f69886cbc50a400884f4b82207026776.16,Byington Frog,Buyington Park Frog (Byington),37.536792,-122.021899,5705 Byington Dr, Newark,CA,94560, USA,ByingtonFrog,1
 7315870718c54c4b968140b7a16a409c.16,,Byington Park,37.535742,-122.020323,5803 Central Ave, Newark,CA,94560, USA,ByingtonPark,1
 92c1ea83dbaf4c54952fd8decb81f117.16,,Cabrillo Trail Park,37.564782,-122.025954,4101-4281 Jacinto Dr, Fremont,CA,94536, USA,,0
 0d18dbe92e5d4b6692ef3fa4682caca2.12,,California School for the Deaf,37.557668,-121.961824,1108 Stevenson Blvd, Fremont,CA,94538, USA,,0
@@ -148,7 +148,7 @@ acd58987747a4d4c9182b82301abe04d.16,,Holly Community Center,37.592988,-122.07477
 49a5d6fa72154e8e9ee1aa762449446c.16,,I Gate Fountain 2,37.549833,-122.064717,6558-6562 Kaiser Dr, Fremont,CA,94555, USA,,0
 542b0187f6514f07900d43abdb9ae58b.16,,"In Memory of Dr. Harry Waters, Jr.",37.539797,-122.08796,Apay Way, Fremont,CA,94555, USA,,0
 094192bab95b4a808d473e86b9d6928d.16,,Industrial Fountain,37.502866,-121.954028,4372-4386 Bus Center Dr, Fremont,CA,94538, USA,,0
-36e610b497f245fdb15ee0683418ae48.16,,Inverness Ridge,37.523411,-121.929619,43600-43602 Skye Rd, Fremont,CA,94539, USA,,0
+36e610b497f245fdb15ee0683418ae48.16,,Inverness Ridge,37.523411,-121.929619,43600-43602 Skye Rd, Fremont,CA,94539, USA,Inverness,1
 53f8d59111084918b644b5d0902a9d80.16,,Irvington Community Park (ICP),37.522771,-121.963727,41825 Blacow Rd, Fremont,CA,94538, USA,ICP,1
 b9825520e0664092a08e117ad9f5fdc7.11,,Irvington District Marker - East,37.533527,-121.952445,3343-3391 Washington Blvd, Fremont,CA,94539, USA,,0
 d732c974b973464d99772d48084d5df2.16,Jehovah's Witness,Jehova's Witnesses,37.531449,-121.936533,1611-1799 Washington Blvd, Fremont,CA,94539, USA,,0
@@ -254,7 +254,7 @@ ecdf9374d40441c18ca57677f1f884f8.16,,Rings Arch,37.584377,-122.068447,32500 Mete
 00489afcb2ed472f875541f4d294aed2.16,,Seabreeze Park,37.577076,-122.082247,5312 Carmel Way, Union City,CA,94587, USA,SeabreezePark,1
 50e759190b2d41b984d2a7c733098bf8.16,,Shell Mound,37.557553,-122.082396,Chochenyo Trail, Fremont,CA,94555, USA,,0
 b0ed4a17e7574453bc0a077ccae24b09.16,,Shih-Lan Chang Memorial Bench (SLB),37.54718,-121.957868,40720 Paseo Padre Pkwy, Fremont,CA,94538, USA,SLB,1
-30f5afd8aa8b47c79fa8e3e010c8d55b.16,,Show Business Mural,37.499728,-121.971354,43917 Pacific Commons Blvd, Fremont,CA,94538, USA,,0
+30f5afd8aa8b47c79fa8e3e010c8d55b.16,,Show Business Mural (PAC Theater),37.499728,-121.971354,43917 Pacific Commons Blvd, Fremont,CA,94538, USA,,0
 0f61543fbf66427da2ee4412d5ebfb38.16,,Sikh Temple Playground,37.583532,-121.999151,398 Gurdwara Rd, Fremont,CA,94536, USA,,0
 d475dd3eaa4641daa72759c0981f509a.16,,Simbra Memorial Bench,37.550719,-121.96349,1 Sailway Dr, Fremont,CA,94538, USA,Simbra,1
 db45ac7bb6e9412d999f004e6294b936.16,,Solar Power PV Tracking System,37.558447,-122.065745,6032-6156 Paseo Padre Pkwy, Fremont,CA,94555, USA,,0
@@ -263,7 +263,7 @@ db45ac7bb6e9412d999f004e6294b936.16,,Solar Power PV Tracking System,37.558447,-1
 46cf5e9fa2614a377a07008fe70271f0,Pac Sprint,Sprint - Pacific Commons,37.505103,-121.971213,43417 Christy St, Fremont,CA,94538, USA,PACSprint,1
 02e4917eab83aa341d994e12b8c3dc1e,UC Sprint,Sprint - Union City,37.60206,-122.06771,30970 Courthouse Dr, Union City,CA,94587, USA,UCSprint,1
 99f2919b1d6242e3a15c4a9e9ab83f79.16,,St. Anne's Church,37.587176,-122.07245,32223 Cabello St, Union City,CA,94587, USA,,0
-b7a552256aef450d972c5b9c820b3df5.16,,St. Christina Orthodox Church,37.558802,-122.003121,3683 Parish Ave, Fremont,CA,94536, USA,,0
+b7a552256aef450d972c5b9c820b3df5.16,St Christinas,St. Christina Orthodox Church,37.558802,-122.003121,3683 Parish Ave, Fremont,CA,94536, USA,,0
 541da9c2be93438c9158dbeb27e0bb86.16,,St. James Catholic  Church,37.572517,-122.035278,34700 Fremont Blvd, Fremont,CA,94555, USA,,0
 61cfac33c0d26f536667904c6ca69a94,HD Starbucks,Starbucks - Home Depot,37.51125788,-121.9480507,43937 Hugo Terrace, Fremont,CA,94538, USA,HDStarbucks,1
 a521ab7bcaf7dbc8783d7c23f01dc205,PAC Starbucks,Starbucks - Pacific Commons,37.50415763,-121.9761696,5605 Auto Mall Pkwy, Fremont,CA,94538, USA,PACStarbucks,1
