@@ -179,6 +179,7 @@ def run_tests():
 Bot code
 '''
 bot = commands.Bot(command_prefix='!')
+legendaries = []
 
 @bot.event
 async def on_ready():
@@ -219,6 +220,15 @@ async def reload_gyms():
     load_gyms()
     await bot.say('Gyms reloaded')
 
+@bot.command()
+@commands.has_any_role('Mods', 'Developer')
+async def set_legendaries(*, arg: str):
+    global legendaries
+    args = arg.split()
+    if len(args) > 0:
+        legendaries = args
+    await bot.say('Legendaries set')
+
 @bot.command(pass_context=True)
 async def raid(ctx, *, arg: str):
     report_channel = discord.utils.get(ctx.message.server.channels, name=REPORT_CHANNEL_NAME)
@@ -250,7 +260,7 @@ async def raid(ctx, *, arg: str):
         if found[0] == process_name('Country Way , Fremont'):
             msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
 
-        if boss == 'kyogre' or boss == 'regice':
+        if boss in legendaries:
             msg = '{} {}'.format(legendary_role.mention, msg)
         await bot.send_message(report_channel, content = msg)
         await bot.say('Raid reported to ' + report_channel.mention)
