@@ -26,6 +26,7 @@ Irvington Community Park (ICP) is here http://maps.google.com/maps?q=37.522771,-
 
 REPORT_CHANNEL_NAME = 'raid_alerts_only'
 LEGENDARY_ROLE_NAME = 'LegendaryRaid'
+FOUR_SKULL_ROLE_NAME = '4SkullRaid'
 RARES_ALERT_CHANNEL_NAME = 'rare_mon_alerts_only'
 RARES_REPORT_CHANNEL_NAME = 'rare_mon_reports'
 
@@ -224,13 +225,15 @@ async def reload_gyms():
 @commands.has_any_role('Mods', 'Developer')
 async def set_legendaries(*, arg: str):
     global legendaries
-    args = arg.split()
+    args = arg.lower().split()
     if len(args) > 0:
         legendaries = args
     await bot.say('Legendaries set')
 
 @bot.command(pass_context=True)
 async def raid(ctx, *, arg: str):
+    notify = ['Shinx', 'Absol', 'Marowak']
+
     report_channel = discord.utils.get(ctx.message.server.channels, name=REPORT_CHANNEL_NAME)
     if report_channel == None:
         print(REPORT_CHANNEL_NAME + ' channel not found')
@@ -254,13 +257,22 @@ async def raid(ctx, *, arg: str):
         await bot.say(MSG_GYM_NOT_FOUND.format(gym))        
     elif len(found) == 1:
         reporter = ctx.message.author
+
+        boss = boss.title()
+        if boss in notify:
+            boss_role = discord.utils.get(ctx.message.server.roles, name=boss)
+            if boss_role != None:
+                boss = boss_role.mention
+            else:
+                print(boss, 'role not found')
+
         msg = generate_raid_post(boss, time_left, found[0])
         msg = '{}\nreported by {}'.format(msg, reporter.mention)
 
         if found[0] == process_name('Country Way , Fremont'):
             msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
 
-        if boss in legendaries:
+        if boss.lower() in legendaries:
             msg = '{} {}'.format(legendary_role.mention, msg)
         await bot.send_message(report_channel, content = msg)
         await bot.say('Raid reported to ' + report_channel.mention)
@@ -276,8 +288,7 @@ async def egg(ctx, *, arg: str):
         return
         
     legendary_role = discord.utils.get(ctx.message.server.roles, name=LEGENDARY_ROLE_NAME)
-    if legendary_role == None:
-        print(MSG_LEGENDARY_ROLE_MISSING)
+    four_skull_role = discord.utils.get(ctx.message.server.roles, name=FOUR_SKULL_ROLE_NAME)
 
     (egg_level, until_hatch, gym) = parse_report(arg)
     if not egg_level.isnumeric():
@@ -302,8 +313,12 @@ async def egg(ctx, *, arg: str):
         if found[0] == process_name('Country Way , Fremont'):
             msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
 
-        if egg_level == '5':
-            msg = '{} {}'.format(legendary_role.mention, msg)            
+        if (egg_level == '5') and (legendary_role != None):
+            msg = '{} {}'.format(legendary_role.mention, msg)
+            
+        if (egg_level == '4') and (four_skull_role != None):
+            msg = '{} {}'.format(four_skull_role.mention, msg)
+
         await bot.send_message(report_channel, content = msg)
         await bot.say('Egg reported to '+ report_channel.mention)
     else:
