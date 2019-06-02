@@ -218,8 +218,10 @@ async def whereis(*, arg: str):
 @bot.command()
 @commands.has_any_role('Mods', 'Developer')
 async def reload_gyms():
-    load_gyms()
-    await bot.say('Gyms reloaded')
+    if load_gyms():
+        await bot.say('Gyms reloaded')
+    else:
+        await bot.say('Unable to reload gyms')
 
 @bot.command()
 @commands.has_any_role('Mods', 'Developer')
@@ -363,7 +365,52 @@ async def wild(ctx, *, arg: str):
 
     else:
         await bot.say("Thanks for the report. Not quite a rare mon, but someone will appreciate it.")
-            
+
+
+@bot.command(pass_context=True)
+async def get_invite(ctx):
+    if ctx.message.server == None:
+        msg = 'Please use this command from a server channel.'
+        await bot.send_message(ctx.message.author, msg)
+        return
+        
+    if ctx.message.server.name == "(Official) Pokémon GO: Fremont":
+        channel_name='welcome'
+        channel = discord.utils.get(ctx.message.server.channels, name=channel_name)
+        
+        invite = await bot.create_invite(channel, max_age=3600*24, max_use=1, unique=True)
+        if invite != None:
+            await bot.send_message(ctx.message.author, str(invite))
+            await bot.say('Invite sent via dm')
+        else:
+            await bot.say('Unable to create invite')
+    else:
+        await bot.say('Sorry, this command is not allowed on this server.')
+
+
+@bot.command(pass_context=True)
+async def ex_raid(ctx, *, arg: str):
+    (date, time, gym) = parse_report(arg)
+    
+    found = find_gyms(gym)
+    if len(found) == 0:
+        await bot.say(MSG_GYM_NOT_FOUND.format(gym))        
+    elif len(found) == 1:
+        reporter = ctx.message.author
+        
+        msg = "EX Raid at {}\n{}\nhatches on {} at {}".format( 
+                     gyms[gym]['name'], 
+                     create_link(gym),
+                     date, 
+                     time)
+        
+        msg = '{}\nreported by {}'.format(msg, reporter.mention)
+
+        await bot.say(msg)
+    else:
+        await bot.say(MSG_REPORT_MULTIPLE_MATCHES.format(gym))
+
+
 '''
 Main
 '''
