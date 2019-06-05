@@ -26,6 +26,7 @@ Irvington Community Park (ICP) is here http://maps.google.com/maps?q=37.522771,-
 
 REPORT_CHANNEL_NAME = 'raid_alerts_only'
 LEGENDARY_ROLE_NAME = 'LegendaryRaid'
+FOUR_SKULL_ROLE_NAME = '4SkullRaid'
 RARES_ALERT_CHANNEL_NAME = 'rare_mon_alerts_only'
 RARES_REPORT_CHANNEL_NAME = 'rare_mon_reports'
 
@@ -35,6 +36,8 @@ rare_mons = {}
 
 def process_name(name):
     new_name = name.lower()
+
+    new_name = new_name.replace('’', "'")
 
     table = str.maketrans({key: None for key in string.punctuation})
     new_name = new_name.translate(table) 
@@ -133,7 +136,11 @@ def parse_report(arg):
 def generate_raid_post(boss, time_left, gym):
     until = datetime.datetime.now() + datetime.timedelta(minutes = int(time_left))
     link = create_link(gym)
-    msg = "{} at {}\n{}\nuntil {} ({} mins remaining)".format(boss.title(), gyms[gym]['name'], 
+    ex = ''
+    if gyms[gym]['ex'] == '1':
+        ex = ' 🎫'
+    msg = "{} at {}\n{}\nuntil {} ({} mins remaining)".format(boss.title(), 
+           gyms[gym]['name'] + ex, 
            link,
            until.strftime("%I:%M %p"), 
            time_left)
@@ -142,7 +149,11 @@ def generate_raid_post(boss, time_left, gym):
 def generate_egg_post(egg_level, until_hatch,  gym):
     hatch = datetime.datetime.now() + datetime.timedelta(minutes = int(until_hatch))
     link = create_link(gym)
-    msg = "Level {} 🥚 at {}\n{}\nhatches at {} (in {} mins)".format(egg_level, gyms[gym]['name'], 
+    ex = ''
+    if gyms[gym]['ex'] == '1':
+        ex = ' 🎫'
+    msg = "Level {} 🥚 at {}\n{}\nhatches at {} (in {} mins)".format(egg_level, 
+                 gyms[gym]['name'] + ex, 
                  link,
                  hatch.strftime("%I:%M %p"), 
                  until_hatch)
@@ -169,6 +180,7 @@ def run_tests():
 Bot code
 '''
 bot = commands.Bot(command_prefix='!')
+legendaries = []
 
 @bot.event
 async def on_ready():
@@ -206,11 +218,24 @@ async def whereis(*, arg: str):
 @bot.command()
 @commands.has_any_role('Mods', 'Developer')
 async def reload_gyms():
-    load_gyms()
-    await bot.say('Gyms reloaded')
+    if load_gyms():
+        await bot.say('Gyms reloaded')
+    else:
+        await bot.say('Unable to reload gyms')
+
+@bot.command()
+@commands.has_any_role('Mods', 'Developer')
+async def set_legendaries(*, arg: str):
+    global legendaries
+    args = arg.lower().split()
+    if len(args) > 0:
+        legendaries = args
+    await bot.say('Legendaries set')
 
 @bot.command(pass_context=True)
 async def raid(ctx, *, arg: str):
+    notify = ['Shinx', 'Absol', 'Marowak']
+
     report_channel = discord.utils.get(ctx.message.server.channels, name=REPORT_CHANNEL_NAME)
     if report_channel == None:
         print(REPORT_CHANNEL_NAME + ' channel not found')
@@ -234,13 +259,22 @@ async def raid(ctx, *, arg: str):
         await bot.say(MSG_GYM_NOT_FOUND.format(gym))        
     elif len(found) == 1:
         reporter = ctx.message.author
+
+        boss = boss.title()
+        if boss in notify:
+            boss_role = discord.utils.get(ctx.message.server.roles, name=boss)
+            if boss_role != None:
+                boss = boss_role.mention
+            else:
+                print(boss, 'role not found')
+
         msg = generate_raid_post(boss, time_left, found[0])
         msg = '{}\nreported by {}'.format(msg, reporter.mention)
 
         if found[0] == process_name('Country Way , Fremont'):
             msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
 
-        if boss == 'latias' or boss == 'ho-oh':
+        if boss.lower() in legendaries:
             msg = '{} {}'.format(legendary_role.mention, msg)
         await bot.send_message(report_channel, content = msg)
         await bot.say('Raid reported to ' + report_channel.mention)
@@ -256,8 +290,7 @@ async def egg(ctx, *, arg: str):
         return
         
     legendary_role = discord.utils.get(ctx.message.server.roles, name=LEGENDARY_ROLE_NAME)
-    if legendary_role == None:
-        print(MSG_LEGENDARY_ROLE_MISSING)
+    four_skull_role = discord.utils.get(ctx.message.server.roles, name=FOUR_SKULL_ROLE_NAME)
 
     (egg_level, until_hatch, gym) = parse_report(arg)
     if not egg_level.isnumeric():
@@ -282,8 +315,12 @@ async def egg(ctx, *, arg: str):
         if found[0] == process_name('Country Way , Fremont'):
             msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
 
-        if egg_level == '5':
-            msg = '{} {}'.format(legendary_role.mention, msg)            
+        if (egg_level == '5') and (legendary_role != None):
+            msg = '{} {}'.format(legendary_role.mention, msg)
+            
+        if (egg_level == '4') and (four_skull_role != None):
+            msg = '{} {}'.format(four_skull_role.mention, msg)
+
         await bot.send_message(report_channel, content = msg)
         await bot.say('Egg reported to '+ report_channel.mention)
     else:
@@ -300,9 +337,13 @@ def is_rare(name, iv):
 
 @bot.command(pass_context=True)    
 async def wild(ctx, *, arg: str):
-    args = arg.split(' ', 2)
-    if len(args) < 3:    
-        await bot.say("Catbot is not a service of the NSA and doesn't know exactly where you are. Please provide a location pin.")
+    args = arg.split(None, 2) # split on whitespace
+    if len(args) < 3:
+        if not args[1].isnumeric():
+            msg = 'Please provide the IV. IVs should be 0-100'
+        else:
+            msg = "Catbot is not a service of the NSA and doesn't know exactly where you are. Please provide a location pin."
+        await bot.say(msg)
         return
     
     (name, iv, link) = args
@@ -324,7 +365,52 @@ async def wild(ctx, *, arg: str):
 
     else:
         await bot.say("Thanks for the report. Not quite a rare mon, but someone will appreciate it.")
-            
+
+
+@bot.command(pass_context=True)
+async def get_invite(ctx):
+    if ctx.message.server == None:
+        msg = 'Please use this command from a server channel.'
+        await bot.send_message(ctx.message.author, msg)
+        return
+        
+    if ctx.message.server.name == "(Official) Pokémon GO: Fremont":
+        channel_name='welcome'
+        channel = discord.utils.get(ctx.message.server.channels, name=channel_name)
+        
+        invite = await bot.create_invite(channel, max_age=3600*24, max_use=1, unique=True)
+        if invite != None:
+            await bot.send_message(ctx.message.author, str(invite))
+            await bot.say('Invite sent via dm')
+        else:
+            await bot.say('Unable to create invite')
+    else:
+        await bot.say('Sorry, this command is not allowed on this server.')
+
+
+@bot.command(pass_context=True)
+async def ex_raid(ctx, *, arg: str):
+    (date, time, gym) = parse_report(arg)
+    
+    found = find_gyms(gym)
+    if len(found) == 0:
+        await bot.say(MSG_GYM_NOT_FOUND.format(gym))        
+    elif len(found) == 1:
+        reporter = ctx.message.author
+        
+        msg = "EX Raid at {}\n{}\nhatches on {} at {}".format( 
+                     gyms[gym]['name'], 
+                     create_link(gym),
+                     date, 
+                     time)
+        
+        msg = '{}\nreported by {}'.format(msg, reporter.mention)
+
+        await bot.say(msg)
+    else:
+        await bot.say(MSG_REPORT_MULTIPLE_MATCHES.format(gym))
+
+
 '''
 Main
 '''

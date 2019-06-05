@@ -1,6 +1,14 @@
 # catbot
 Discord bot for Pokemon Go users. It's written in Python 3.6 and uses the discord.py library.
 
+## Installation
+Requires discord.py v0.16.12 which can be found at https://github.com/Rapptz/discord.py
+
+Information on how to deploy your discord app can be found at https://discordapp.com/developers/docs/intro
+
+The Catbot app expects the bot key to be stored in an environment variable named "DiscordKey".
+
+## Usage
 Catbot has the following commands:
 
 - whereis - returns matching Pokemon Go gym locations when given a gym name
