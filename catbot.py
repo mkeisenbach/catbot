@@ -94,17 +94,16 @@ def search_aliases(name):
 
 def find_gyms(name):
     global gyms
-    found = []
-   
+    global aliases
+       
     new_name = process_name(name) 
     if new_name in gyms.keys():
-        found = [new_name]
-    else:
-        found = search_names(new_name)
-        if len(found) == 0:
-            found = search_aliases(new_name)
-            
-    return found
+        return [new_name]
+    
+    if new_name in aliases:
+        return [aliases[new_name]]
+    
+    return search_names(new_name)
 
 def create_link(gym):
     LINK_BASE = 'http://maps.google.com/maps?q='
@@ -218,10 +217,8 @@ async def whereis(*, arg: str):
 @bot.command()
 @commands.has_any_role('Mods', 'Developer')
 async def reload_gyms():
-    if load_gyms():
-        await bot.say('Gyms reloaded')
-    else:
-        await bot.say('Unable to reload gyms')
+    load_gyms()
+    await bot.say('Gyms reloaded')
 
 @bot.command()
 @commands.has_any_role('Mods', 'Developer')
@@ -386,30 +383,6 @@ async def get_invite(ctx):
             await bot.say('Unable to create invite')
     else:
         await bot.say('Sorry, this command is not allowed on this server.')
-
-
-@bot.command(pass_context=True)
-async def ex_raid(ctx, *, arg: str):
-    (date, time, gym) = parse_report(arg)
-    
-    found = find_gyms(gym)
-    if len(found) == 0:
-        await bot.say(MSG_GYM_NOT_FOUND.format(gym))        
-    elif len(found) == 1:
-        reporter = ctx.message.author
-        
-        msg = "EX Raid at {}\n{}\nhatches on {} at {}".format( 
-                     gyms[gym]['name'], 
-                     create_link(gym),
-                     date, 
-                     time)
-        
-        msg = '{}\nreported by {}'.format(msg, reporter.mention)
-
-        await bot.say(msg)
-    else:
-        await bot.say(MSG_REPORT_MULTIPLE_MATCHES.format(gym))
-
 
 '''
 Main
