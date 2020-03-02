@@ -96,20 +96,20 @@ def find_gyms(name):
     global gyms
     global aliases
        
-    new_name = process_name(name) 
-    if new_name in gyms.keys():
-        return [new_name]
+    processed_name = process_name(name) 
+    if processed_name in gyms.keys():
+        return [processed_name]
     
-    if new_name in aliases:
-        return [aliases[new_name]]
+    if processed_name in aliases:
+        return [aliases[processed_name]]
     
-    return search_names(new_name)
+    return search_names(processed_name)
 
 def create_link(gym):
     LINK_BASE = 'http://maps.google.com/maps?q='
     return LINK_BASE + gyms[gym]['latitude'] + ',' + gyms[gym]['longitude'] 
 
-def get_response(name):
+def get_whereis_response(name):
     found = find_gyms(name)
     num_found = len(found)
 
@@ -165,7 +165,7 @@ def test_whereis(name):
     if name == 'help':
         response = MSG_HELP
     else:
-        response = get_response(name)
+        response = get_whereis_response(name)
     print(response)
 
 def run_tests():
@@ -211,7 +211,7 @@ async def whereis(*, arg: str):
     if arg == 'help':
         response = MSG_HELP
     else:
-        response = get_response(arg)
+        response = get_whereis_response(arg)
     await bot.say(response)
 
 @bot.command()
