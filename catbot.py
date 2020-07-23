@@ -1,21 +1,26 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Feb 11 20:43:38 2018
+Created on Thu Oct  4 10:16:53 2018
+
+Catbot 2.0 uses discord.py version 1.x
+
 @author: Mei Eisenbach
 """
 
 import os
-import csv
+import re
+from discord import utils
 from discord.ext import commands
-import discord.utils
-import string
-import datetime
+import datetime as dt
+from gyms import Gyms
 
-MSG_GYM_NOT_FOUND = '"{}" not found. Please check your spelling or use fewer words.'
-MSG_TOO_MANY_RESULTS = 'Too many matches. Please be more specific.'
-MSG_REPORT_MULTIPLE_MATCHES = 'More than one gym matches "{}"'
-MSG_LEGENDARY_ROLE_MISSING = 'Legendary Raid role not found'
+gyms = None
+gymfile = 'gyms.csv'
+legendaries = []
 
+# =============================================================================
+# String constants
+# =============================================================================
 MSG_HELP = "!whereis [gym] will return a location pin for the gym.\n\
 Examples:\n\
     !whereis Irvington Community Park\n\
@@ -26,379 +31,311 @@ Irvington Community Park (ICP) is here http://maps.google.com/maps?q=37.522771,-
 
 REPORT_CHANNEL_NAME = 'raid_alerts_only'
 LEGENDARY_ROLE_NAME = 'LegendaryRaid'
-FOUR_SKULL_ROLE_NAME = '4SkullRaid'
-RARES_ALERT_CHANNEL_NAME = 'rare_mon_alerts_only'
-RARES_REPORT_CHANNEL_NAME = 'rare_mon_reports'
 
-gyms = {}
-aliases = {}
-rare_mons = {}
+ERR_GYM_NOT_FOUND = '"{}" not found. Please check your spelling or use fewer words.'
+ERR_TOO_MANY_RESULTS = 'Too many matches. Please be more specific.'
+ERR_REPORT_MULTIPLE_MATCHES = 'More than one gym matches "{}"'
 
-def process_name(name):
-    new_name = name.lower()
+ERR_LEGENDARY_ROLE_MISSING = 'Legendary Raid role not found'
 
-    new_name = new_name.replace('’', "'")
+ERR_RAID_NOT_FOUND = 'Raid not found'
+ERR_INVALID_DATETIME = "Invalid date or time"
+   
+# =============================================================================
+# Helper and test functions
+# =============================================================================
+def generate_post(is_egg, identifier, mins, gym, reporter):
+    time = dt.datetime.now() + dt.timedelta(minutes = int(mins))
+    link = gyms.get_link(gym)
+    gym_name = gyms.get_name(gym)
+    if gyms.is_ex(gym):
+        gym_name = gym_name + ' 🎫'
+    if is_egg:
+        content = "Level {} 🥚 at {}\n{}\nhatches at {} (in {} mins)\nreported by {}"\
+            .format(identifier,
+                    gym_name, 
+                    link,
+                    time.strftime("%I:%M %p"), 
+                    mins,
+                    reporter)
+    else:
+        content = "{} at {}\n{}\nuntil {} ({} mins remaining)\nreported by {}"\
+        .format(identifier.title(),
+                gym_name, 
+                link,
+                time.strftime("%I:%M %p"), 
+                mins,
+                reporter)
+    return content
 
-    table = str.maketrans({key: None for key in string.punctuation})
-    new_name = new_name.translate(table) 
-
-    new_name = new_name.replace(' ', '')
-    return new_name
-
-def load_gyms():
-    global gyms
-    global aliases
-    gyms = {}
-    aliases = {}
-    
-    try:
-        with open('gyms.csv') as gymfile:
-            gymreader = csv.DictReader(gymfile, delimiter=',', quotechar='"')
-            for row in gymreader:
-                namekey = process_name(row['name']) 
-                gyms[namekey] = row
-                if len(row['alias']) > 0:
-                    aliases[process_name(row['alias'])] = namekey
-            return True
-    except:
-        return False
-
-def load_rare_mons():
-    global rare_mons
-    
-    try:
-        with open('rare_mons.csv') as monsfile:
-            reader = csv.DictReader(monsfile, delimiter=',', quotechar='"')
-            for row in reader:
-                rare_mons[row['Name'].lower()] = int(row['Min IV'])
-            return True
-    except:
-        return False
-
-def search_names(name):
-    global gyms
-    found = []
-    for namekey in gyms:
-        if name in namekey:
-            found.append(namekey)
-    return found
-
-def search_aliases(name):
-    global aliases
-    found = []
-
-    for alias in aliases:
-        if name in alias:
-            found.append(aliases[alias])
-    return found
-
-def find_gyms(name):
-    global gyms
-    global aliases
-       
-    processed_name = process_name(name) 
-    if processed_name in gyms.keys():
-        return [processed_name]
-    
-    if processed_name in aliases:
-        return [aliases[processed_name]]
-    
-    return search_names(processed_name)
-
-def create_link(gym):
-    LINK_BASE = 'http://maps.google.com/maps?q='
-    return LINK_BASE + gyms[gym]['latitude'] + ',' + gyms[gym]['longitude'] 
-
-def get_whereis_response(name):
-    found = find_gyms(name)
+def test_whereis(name):
+    found = gyms.find(name)
     num_found = len(found)
 
     if num_found == 0:
-        reponse = MSG_GYM_NOT_FOUND.format(name)
-        print(reponse)
+        content = ERR_GYM_NOT_FOUND.format(name)
     elif num_found <= 3:
         locations = []
         for gym in found:
-            link = create_link(gym)
-            locations.append(gyms[gym]['name'] + " is here " + link )
-        reponse = '\n'.join(locations)
+            link = gyms.get_link(gym)
+            locations.append(gyms.get_name(gym) + " is here " + link )
+        content = '\n'.join(locations)
+    print(content)
+
+def parse_args(arg_str):
+    p = re.compile( r'^(.*) (at|in) (\S*) ?(\S*)? ?(\S*)?')
+    m = p.match(arg_str)
+    if m:
+        return m.groups()
     else:
-        reponse = MSG_TOO_MANY_RESULTS
+        return []
 
-    return reponse
+def format_do(gym, start, despawn, boss):
+    link = gyms.get_link(gym)
+    gym_name = gyms.get_name(gym)
+    content = '-new "{}" {} {} {} {}'\
+    .format(boss.title(),
+            link,
+            start.strftime("%I:%M%p"), 
+            despawn.strftime("%I:%M%p"),
+            gym_name)
+    return content
 
-def parse_report(arg):
-    arg = arg.lower()
-    arg = arg.replace('  ', ' ')
-    return arg.split(' ', 2)
+def process_do(arg_str):    
+    arguments = parse_args(arg_str)
 
-def generate_raid_post(boss, time_left, gym):
-    until = datetime.datetime.now() + datetime.timedelta(minutes = int(time_left))
-    link = create_link(gym)
-    ex = ''
-    if gyms[gym]['ex'] == '1':
-        ex = ' 🎫'
-    msg = "{} at {}\n{}\nuntil {} ({} mins remaining)".format(boss.title(), 
-           gyms[gym]['name'] + ex, 
-           link,
-           until.strftime("%I:%M %p"), 
-           time_left)
-    return msg
+    if len(arguments) == 0:
+        return 'Usage: !do gym_name at/in start_time/min [despawn_time] [boss_name]'
 
-def generate_egg_post(egg_level, until_hatch,  gym):
-    hatch = datetime.datetime.now() + datetime.timedelta(minutes = int(until_hatch))
-    link = create_link(gym)
-    ex = ''
-    if gyms[gym]['ex'] == '1':
-        ex = ' 🎫'
-    msg = "Level {} 🥚 at {}\n{}\nhatches at {} (in {} mins)".format(egg_level, 
-                 gyms[gym]['name'] + ex, 
-                 link,
-                 hatch.strftime("%I:%M %p"), 
-                 until_hatch)
-    return msg
+    gym_name = arguments[0]
 
-'''
-Functions for testing locally
-'''    
-def test_whereis(name):
-    if name == 'help':
-        response = MSG_HELP
+    # minutes given, calculate start time
+    if arguments[1] == 'in':
+        start = dt.datetime.now() + dt.timedelta(minutes = int(arguments[2]))
     else:
-        response = get_whereis_response(name)
-    print(response)
+        start = dt.datetime.strptime(arguments[2], '%I:%M%p')
 
-def run_tests():
-    test_whereis('Children Playing')
-    test_whereis('icp')
-    test_whereis('starbucks')
-    test_whereis('st. edward')
-    test_whereis('unknown gym')
+    # assign rest of arguments            
+    if arguments[3] == '':
+        despawn = start + dt.timedelta(minutes=1)
+        boss = "egg"
+    elif arguments[4] == '':
+        despawn = start + dt.timedelta(minutes=1)
+        boss = arguments[3]
+    else:
+        despawn = dt.datetime.strptime(arguments[3], '%I:%M%p')
+        boss = arguments[4]
+    
+    found = gyms.find(gym_name)
+    if len(found) == 0:
+        content = ERR_GYM_NOT_FOUND.format(gym_name)
+    elif len(found) == 1:
+        content = format_do(found[0], start, despawn, boss)
+    else:
+        content = ERR_REPORT_MULTIPLE_MATCHES.format(gym_name)
 
-'''
-Bot code
-'''
-bot = commands.Bot(command_prefix='!')
-legendaries = []
+    return content
+
+def test_do():
+    # absolute start time
+    assert process_do('Rings Arch at 8:30pm 9:15pm Kyurem') ==\
+        '-new "Kyurem" http://maps.google.com/maps?q=37.584377,-122.068447 08:30PM 09:15PM Rings Arch'
+    assert process_do('Rings Arch at 8:30pm Kyurem') ==\
+        '-new "Kyurem" http://maps.google.com/maps?q=37.584377,-122.068447 08:30PM 08:31PM Rings Arch'
+    assert process_do('Rings Arch at 8:30pm') ==\
+        '-new "Egg" http://maps.google.com/maps?q=37.584377,-122.068447 08:30PM 08:31PM Rings Arch'
+
+    # errors
+    assert process_do('Rings Arch 8:30pm 9:15pm Kyurem') ==\
+        'Usage: !do gym_name at/in start_time/min [despawn_time] [boss_name]'
+    assert process_do('Ring Arch at 8:30pm 9:15pm Kyurem') ==\
+        '"Ring Arch" not found. Please check your spelling or use fewer words.'
+    
+    print('All asserts passed.')
+    
+    # relative start time
+    print('Check output from relative times...')
+    print(process_do('Rings Arch in 30 9:15pm Kyurem'))
+    print(process_do('Rings Arch in 30 Kyurem'))
+    print(process_do('Rings Arch in 30'))
+    
+
+# =============================================================================
+# Bot code
+# =============================================================================
+bot_prefix = '!'
+bot = commands.Bot(command_prefix=bot_prefix)
 
 @bot.event
 async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    
-    print('Report channel name: {}'.format(REPORT_CHANNEL_NAME))
-    print('Legendary Role: {}'.format(LEGENDARY_ROLE_NAME))
-    
-    print('Rares Report channel name: {}'.format(RARES_REPORT_CHANNEL_NAME))
-    
-    
+    print('We have logged in as {0.user}'.format(bot))
+    print('Bot Prefix: ', bot_prefix)
+
 @bot.event
 async def on_message(message):
-    msg = ''
+    content = ''
     if bot.user.mentioned_in(message) and message.mention_everyone is False:
         message_lowered = message.content.lower()
         if 'hello' in message_lowered or 'hi' in message_lowered:
-            msg = 'Hello, {}'.format(message.author.mention)
+            content = 'Hello, {}'.format(message.author.mention)
         elif 'thanks' in message_lowered:
-            msg =  "{} You're welcome".format(message.author.mention)
+            content =  "{} You're welcome".format(message.author.mention)
         elif 'coming' in message_lowered or 'going' in message_lowered:
-            msg = "{} Sorry, I'm a bot and stuck in this server room.".format(message.author.mention)    
-        await bot.send_message(message.channel, content = msg)
+            content = "{} Sorry, I'm a bot and stuck in this server room.".format(message.author.mention)    
+        await message.channel.send(content)
+
     await bot.process_commands(message)
-    
+
+
 @bot.command()
-async def whereis(*, arg: str):
-    if arg == 'help':
-        response = MSG_HELP
+async def whereis(ctx, *args):
+    name = ' '.join(args)
+
+    found = gyms.find(name)
+    num_found = len(found)
+
+    if num_found == 0:
+        content = ERR_GYM_NOT_FOUND.format(name)
+    elif num_found <= 3:
+        locations = []
+        for gym in found:
+            link = gyms.get_link(gym)
+            locations.append(gyms.get_name(gym) + " is here " + link )
+        content = '\n'.join(locations)
     else:
-        response = get_whereis_response(arg)
-    await bot.say(response)
+        content = ERR_TOO_MANY_RESULTS
+
+    await ctx.send(content)
+
 
 @bot.command()
-@commands.has_any_role('Mods', 'Developer')
-async def reload_gyms():
-    load_gyms()
-    await bot.say('Gyms reloaded')
-
-@bot.command()
-@commands.has_any_role('Mods', 'Developer')
-async def set_legendaries(*, arg: str):
-    global legendaries
-    args = arg.lower().split()
-    if len(args) > 0:
-        legendaries = args
-    await bot.say('Legendaries set')
-
-@bot.command(pass_context=True)
-async def raid(ctx, *, arg: str):
-    notify = ['Shinx', 'Absol', 'Marowak']
-
-    report_channel = discord.utils.get(ctx.message.server.channels, name=REPORT_CHANNEL_NAME)
+async def egg(ctx, egg_level, until_hatch, *args):
+    report_channel = utils.get(ctx.guild.channels, name=REPORT_CHANNEL_NAME)
     if report_channel == None:
         print(REPORT_CHANNEL_NAME + ' channel not found')
         return
-    
-    legendary_role = discord.utils.get(ctx.message.server.roles, name=LEGENDARY_ROLE_NAME)
+
+    legendary_role = utils.get(ctx.guild.roles, name=LEGENDARY_ROLE_NAME)
     if legendary_role == None:
-        print(MSG_LEGENDARY_ROLE_MISSING)
-    
-    (boss, time_left, gym) = parse_report(arg)
-    if boss.isnumeric():
-        await bot.say('"{}" is not a raid boss.'.format(boss))
-        return
-    
-    if not time_left.isnumeric():
-        await bot.say('"{}" is not a number. Minutes remaining should be a number'.format(time_left))        
+        await ctx.send(ERR_LEGENDARY_ROLE_MISSING)
         return
 
-    found = find_gyms(gym)
-    if len(found) == 0:
-        await bot.say(MSG_GYM_NOT_FOUND.format(gym))        
-    elif len(found) == 1:
-        reporter = ctx.message.author
-
-        boss = boss.title()
-        if boss in notify:
-            boss_role = discord.utils.get(ctx.message.server.roles, name=boss)
-            if boss_role != None:
-                boss = boss_role.mention
-            else:
-                print(boss, 'role not found')
-
-        msg = generate_raid_post(boss, time_left, found[0])
-        msg = '{}\nreported by {}'.format(msg, reporter.mention)
-
-        if found[0] == process_name('Country Way , Fremont'):
-            msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
-
-        if boss.lower() in legendaries:
-            msg = '{} {}'.format(legendary_role.mention, msg)
-        await bot.send_message(report_channel, content = msg)
-        await bot.say('Raid reported to ' + report_channel.mention)
-    else:
-        await bot.say(MSG_REPORT_MULTIPLE_MATCHES.format(gym))
-
-
-@bot.command(pass_context=True)
-async def egg(ctx, *, arg: str):
-    report_channel = discord.utils.get(ctx.message.server.channels, name=REPORT_CHANNEL_NAME)
-    if report_channel == None:
-        print(REPORT_CHANNEL_NAME + ' channel not found')
-        return
-        
-    legendary_role = discord.utils.get(ctx.message.server.roles, name=LEGENDARY_ROLE_NAME)
-    four_skull_role = discord.utils.get(ctx.message.server.roles, name=FOUR_SKULL_ROLE_NAME)
-
-    (egg_level, until_hatch, gym) = parse_report(arg)
     if not egg_level.isnumeric():
-        await bot.say('"{}" is not a number. Egg levels should be 1-5'.format(egg_level))        
+        await ctx.send('"{}" is not a number. Egg levels should be 1-5'.format(egg_level))        
         return
     if int(egg_level) < 1 or int(egg_level) > 5:
-        await bot.say('"{}" is not valid. Egg levels should be 1-5'.format(egg_level))        
+        await ctx.send('"{}" is not valid. Egg levels should be 1-5'.format(egg_level))        
         return        
     
     if not until_hatch.isnumeric():
-        await bot.say('"{}" is not a number. Minutes until hatch should be a number'.format(until_hatch))        
+        await ctx.send('"{}" is not a number. Minutes until hatch should be a number'.format(until_hatch))        
         return
-    
-    found = find_gyms(gym)
-    if len(found) == 0:
-        await bot.say(MSG_GYM_NOT_FOUND.format(gym))        
-    elif len(found) == 1:
-        reporter = ctx.message.author
-        msg = generate_egg_post(egg_level, until_hatch, found[0])
-        msg = '{}\nreported by {}'.format(msg, reporter.mention)
-
-        if found[0] == process_name('Country Way , Fremont'):
-            msg = msg + "\nWarning: Pokemon GO Players not welcome. Stay off the property."
-
-        if (egg_level == '5') and (legendary_role != None):
-            msg = '{} {}'.format(legendary_role.mention, msg)
             
-        if (egg_level == '4') and (four_skull_role != None):
-            msg = '{} {}'.format(four_skull_role.mention, msg)
+    gym = ' '.join(args)
+    found = gyms.find(gym)
+    if len(found) == 0:
+        await ctx.send(ERR_GYM_NOT_FOUND.format(gym))        
+    elif len(found) == 1:
+        reporter = ctx.message.author.mention
+        content = generate_post(True, egg_level, until_hatch, found[0], reporter)
 
-        await bot.send_message(report_channel, content = msg)
-        await bot.say('Egg reported to '+ report_channel.mention)
+        if egg_level == '5':
+            content = '{} {}'.format(legendary_role.mention, content)            
+
+        await report_channel.send(content)
+        await ctx.send('Egg reported to '+ report_channel.mention)
     else:
-        await bot.say(MSG_REPORT_MULTIPLE_MATCHES.format(gym))
+        await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(gym))
 
-def is_rare(name, iv):
-    iv = int(iv)
-    if iv == 100:
-        return True
-    if name in rare_mons.keys():
-        if iv >= rare_mons[name]:
-            return True
-    return False
 
-@bot.command(pass_context=True)    
-async def wild(ctx, *, arg: str):
-    args = arg.split(None, 2) # split on whitespace
-    if len(args) < 3:
-        if not args[1].isnumeric():
-            msg = 'Please provide the IV. IVs should be 0-100'
-        else:
-            msg = "Catbot is not a service of the NSA and doesn't know exactly where you are. Please provide a location pin."
-        await bot.say(msg)
+@bot.command()
+async def raid(ctx, boss, time_left, *args):    
+    mention = ['shinx']
+    report_channel = utils.get(ctx.guild.channels, name=REPORT_CHANNEL_NAME)
+    if report_channel == None:
+        await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
+        return
+
+    legendary_role = utils.get(ctx.guild.roles, name=LEGENDARY_ROLE_NAME)
+    if legendary_role == None:
+        await ctx.send(ERR_LEGENDARY_ROLE_MISSING)
+        return
+        
+    if boss.isnumeric():
+        await ctx.send('"{}" is not a raid boss.'.format(boss))
         return
     
-    (name, iv, link) = args
-    name = name.lower()
-
-    if not iv.isnumeric():
-        await bot.say('"{}" is not a number. IVs should be 0-100'.format(iv))
+    if not time_left.isnumeric():
+        await ctx.send('"{}" is not a number. Minutes remaining should be a number'.format(time_left))        
         return
+
+    if boss.lower() in mention:
+        boss_role = utils.get(ctx.guild.roles, name=boss)
+        if boss_role != None:
+            boss = boss_role
+
+    gym = ' '.join(args)
+    found = gyms.find(gym)
+    if len(found) == 0:
+        await ctx.send(ERR_GYM_NOT_FOUND.format(gym))        
+    elif len(found) == 1:
+        reporter = ctx.message.author.mention
+        content = generate_post(False, boss, time_left, found[0], reporter)
+
+        if boss in legendaries:
+            content = '{} {}'.format(legendary_role.mention, content)
+
+        await report_channel.send(content)
+        await ctx.send('Raid reported to '+ report_channel.mention)
+    else:
+        await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(gym))
+
+
+@bot.command()
+@commands.has_any_role('Developer')
+async def set_legendaries(ctx, *args):
+    global legendaries
+    if len(args) > 0:
+        legendaries = list(map(str.lower, args))
+    await ctx.message.add_reaction('👍')
+
+@bot.command()
+@commands.has_any_role('Developer')
+async def get_legendaries(ctx, *args):
+    global legendaries
+    msg = ', '.join([el.title() for el in legendaries])
+    if msg == '':
+        msg = 'No legendaries set.'
+    await ctx.send(msg)
+
+@bot.command()
+@commands.has_any_role('Mods', 'Developer')
+async def reload_gyms(ctx):
+    gyms.read_csv(gymfile)
+    await ctx.message.add_reaction('👍')
+
+@commands.has_any_role('Developer')
+@bot.command()
+async def do(ctx, *args):
+    message = process_do(' '.join(args))
+    await ctx.send(message)
     
-    if is_rare(name, iv):
-        report_channel = discord.utils.get(ctx.message.server.channels, name=RARES_ALERT_CHANNEL_NAME)
-        if report_channel == None:
-            print(RARES_ALERT_CHANNEL_NAME + ' channel not found')
-            return
-        
-        msg = '{} {}% IV\n{}\nreported by {}'.format(name.title(), iv, link, ctx.message.author.mention)
-        await bot.send_message(report_channel, msg)
-        await bot.say('Rare Pokemon reported to ' + report_channel.mention)
+    
+# =============================================================================
+# Main
+# =============================================================================
 
-    else:
-        await bot.say("Thanks for the report. Not quite a rare mon, but someone will appreciate it.")
+try:
+    gyms = Gyms(gymfile)
+    print('Gyms loaded')    
+except IOError:
+    print('ERROR: Unable to load gyms from', gymfile)
+    exit()
 
-
-@bot.command(pass_context=True)
-async def get_invite(ctx):
-    if ctx.message.server == None:
-        msg = 'Please use this command from a server channel.'
-        await bot.send_message(ctx.message.author, msg)
-        return
-        
-    if ctx.message.server.name == "(Official) Pokémon GO: Fremont":
-        channel_name='welcome'
-        channel = discord.utils.get(ctx.message.server.channels, name=channel_name)
-        
-        invite = await bot.create_invite(channel, max_age=3600*24, max_use=1, unique=True)
-        if invite != None:
-            await bot.send_message(ctx.message.author, str(invite))
-            await bot.say('Invite sent via dm')
-        else:
-            await bot.say('Unable to create invite')
-    else:
-        await bot.say('Sorry, this command is not allowed on this server.')
-
-'''
-Main
-'''
-if __name__ == "__main__":
-    if not load_gyms():
-        print('ERROR: Unable to load gyms')
-        exit()
-
-    if not load_rare_mons():
-        print('ERROR: Unable to load rare mons')
-        exit()        
-
+if __name__ == "__main__":    
     key = os.getenv('DiscordKey')
+#    key = 'NDk3NDU4OTUzMTU2ODIxMDAz.DpfjpA.RlX1VnosbOyCF9YE1DnRrzOpokw'
     if key == None:
         print('ERROR: Discord Key not found in the environment variables')
         exit()
-
     bot.run(key)
