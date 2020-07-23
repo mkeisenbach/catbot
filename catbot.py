@@ -334,7 +334,6 @@ except IOError:
 
 if __name__ == "__main__":    
     key = os.getenv('DiscordKey')
-#    key = 'NDk3NDU4OTUzMTU2ODIxMDAz.DpfjpA.RlX1VnosbOyCF9YE1DnRrzOpokw'
     if key == None:
         print('ERROR: Discord Key not found in the environment variables')
         exit()
