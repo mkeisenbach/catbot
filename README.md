@@ -2,7 +2,7 @@
 Discord bot for Pokemon Go users. It's written in Python 3.6 and uses the discord.py library.
 
 ## Installation
-Requires discord.py v0.16.12 which can be found at https://github.com/Rapptz/discord.py
+Requires discord.py v1.3.4 which can be found at https://discordpy.readthedocs.io/en/latest/intro.html#installing
 
 Information on how to deploy your discord app can be found at https://discordapp.com/developers/docs/intro
 
@@ -14,7 +14,6 @@ Catbot has the following commands:
 - whereis - returns matching Pokemon Go gym locations when given a gym name
 - egg - to report a Raid egg
 - raid - to report a Raid
-- wild - to report a rare Pokemon 
 
 The gyms are read in from gyms.csv which has the following fields (at minimum):
 - name: the name of the gym (must be unique)
@@ -23,5 +22,3 @@ The gyms are read in from gyms.csv which has the following fields (at minimum):
 - longitude
 
 Name matching is case, space, and punctuation insensitive and will do partial matches. When searching for a gym, both the name and alias fields are searched.
-
-Criteria for rare Pokemon are read from rare_mons.csv.
