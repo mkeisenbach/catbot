@@ -68,20 +68,6 @@ def generate_post(is_egg, identifier, mins, gym, reporter):
                 reporter)
     return content
 
-def test_whereis(name):
-    found = gyms.find(name)
-    num_found = len(found)
-
-    if num_found == 0:
-        content = ERR_GYM_NOT_FOUND.format(name)
-    elif num_found <= 3:
-        locations = []
-        for gym in found:
-            link = gyms.get_link(gym)
-            locations.append(gyms.get_name(gym) + " is here " + link )
-        content = '\n'.join(locations)
-    print(content)
-
 def parse_args(arg_str):
     p = re.compile( r'^(.*) (at|in) (\S*) ?(\S*)? ?(\S*)?')
     m = p.match(arg_str)
@@ -135,6 +121,24 @@ def process_do(arg_str):
         content = ERR_REPORT_MULTIPLE_MATCHES.format(gym_name)
 
     return content
+
+
+# =============================================================================
+# Test functions
+# =============================================================================
+def test_whereis(name):
+    found = gyms.find(name)
+    num_found = len(found)
+
+    if num_found == 0:
+        content = ERR_GYM_NOT_FOUND.format(name)
+    elif num_found <= 3:
+        locations = []
+        for gym in found:
+            link = gyms.get_link(gym)
+            locations.append(gyms.get_name(gym) + " is here " + link )
+        content = '\n'.join(locations)
+    print(content)
 
 def test_do():
     # absolute start time
@@ -314,7 +318,7 @@ async def reload_gyms(ctx):
     gyms.read_csv(gymfile)
     await ctx.message.add_reaction('👍')
 
-@commands.has_any_role('Developer')
+@commands.has_any_role('Developer', 'TR Scientist')
 @bot.command()
 async def do(ctx, *args):
     message = process_do(' '.join(args))
