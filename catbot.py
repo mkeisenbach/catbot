@@ -9,9 +9,10 @@ Catbot 2.0 uses discord.py version 1.x
 
 import os
 import re
+import datetime as dt
 from discord import utils
 from discord.ext import commands
-import datetime as dt
+from dateutil.parser import parse
 from gyms import Gyms
 
 gyms = None
@@ -98,9 +99,12 @@ def process_do(arg_str):
     # minutes given, calculate start time
     if arguments[1] == 'in':
         start = dt.datetime.now() + dt.timedelta(minutes = int(arguments[2]))
-    else:
-        start = dt.datetime.strptime(arguments[2], '%I:%M%p')
-
+    else:        
+        try:
+            start = parse(arguments[2])
+        except:
+            return 'Invalid start time. Valid formats: 00:00 or 0:00pm'
+            
     # assign rest of arguments            
     if arguments[3] == '':
         despawn = start + dt.timedelta(minutes=1)
@@ -109,7 +113,10 @@ def process_do(arg_str):
         despawn = start + dt.timedelta(minutes=1)
         boss = arguments[3]
     else:
-        despawn = dt.datetime.strptime(arguments[3], '%I:%M%p')
+        try:
+            despawn = parse(arguments[3])
+        except:
+            return 'Invalid despawn time. Valid formats: 00:00 or 0:00pm'
         boss = arguments[4]
     
     found = gyms.find(gym_name)
@@ -144,7 +151,7 @@ def test_do():
     # absolute start time
     assert process_do('Rings Arch at 8:30pm 9:15pm Kyurem') ==\
         '-new "Kyurem" http://maps.google.com/maps?q=37.584377,-122.068447 08:30PM 09:15PM Rings Arch'
-    assert process_do('Rings Arch at 8:30pm Kyurem') ==\
+    assert process_do('Rings Arch at 20:30 Kyurem') ==\
         '-new "Kyurem" http://maps.google.com/maps?q=37.584377,-122.068447 08:30PM 08:31PM Rings Arch'
     assert process_do('Rings Arch at 8:30pm') ==\
         '-new "Egg" http://maps.google.com/maps?q=37.584377,-122.068447 08:30PM 08:31PM Rings Arch'
@@ -154,7 +161,10 @@ def test_do():
         'Usage: !do gym_name at/in start_time/min [despawn_time] [boss_name]'
     assert process_do('Ring Arch at 8:30pm 9:15pm Kyurem') ==\
         '"Ring Arch" not found. Please check your spelling or use fewer words.'
-    
+    assert process_do('Rings Arch at 20:30pm 9:15pm Kyurem') ==\
+        'Invalid start time. Valid formats: 00:00 or 0:00pm'
+    assert process_do('Rings Arch at 8:30pm 21:15pm Kyurem') ==\
+        'Invalid despawn time. Valid formats: 00:00 or 0:00pm'
     print('All asserts passed.')
     
     # relative start time
@@ -318,6 +328,7 @@ async def reload_gyms(ctx):
     gyms.read_csv(gymfile)
     await ctx.message.add_reaction('👍')
 
+# Eventually add: 'Pin', 'UC Agent', 'FMT Agent', 'SF Agent', 'HWD Agent'
 @commands.has_any_role('Developer', 'TR Scientist')
 @bot.command()
 async def do(ctx, *args):
