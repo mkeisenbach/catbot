@@ -328,6 +328,25 @@ async def reload_gyms(ctx):
     gyms.read_csv(gymfile)
     await ctx.message.add_reaction('👍')
 
+@bot.command(pass_context=True)
+async def get_invite(ctx):
+    if ctx.message.server == None:
+        msg = 'Please use this command from a server channel.'
+        await bot.send_message(ctx.message.author, msg)
+        return
+        
+    if ctx.message.server.name == "(Official) Pokémon GO: Fremont":        
+        invite = await bot.create_invite(max_age=3600*24, max_use=1, unique=True)
+        if invite != None:
+            await bot.send_message(ctx.message.author, str(invite))
+            await bot.say('Invite sent via dm')
+        else:
+            await bot.say('Unable to create invite')
+    else:
+        await bot.say('Sorry, this command is not allowed on this server.')
+
+
+
 # Eventually add: 'Pin', 'UC Agent', 'FMT Agent', 'SF Agent', 'HWD Agent'
 @commands.has_any_role('Developer', 'TR Scientist')
 @bot.command()
