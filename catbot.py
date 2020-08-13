@@ -337,16 +337,15 @@ async def do(ctx, *args):
 
 @commands.has_any_role('TR Scientist')
 @bot.command()
-async def purge(ctx, limit=10, matches):
+async def purge(ctx, limit=10):
     def check_msg(msg):
-        if matches is not None:
-            pat = r'\d{4}\s*\d{4}\s*\d{4}\s*'
-            if re.search(pat, msg.content) is None:            
-                return False
+        pat = r'\d{4}\s*\d{4}\s*\d{4}\s*'
+        if re.search(pat, msg.content) is None:            
+            return False
         return True
     
     deleted = await ctx.channel.purge(limit=limit, check=check_msg)
-    msg = await ctx.send('Deleted {} message(s)'.format(len(deleted))
+    await ctx.send('Deleted {} message(s)'.format(len(deleted)))
     
 # =============================================================================
 # Main
