@@ -334,7 +334,19 @@ async def reload_gyms(ctx):
 async def do(ctx, *args):
     message = process_do(' '.join(args))
     await ctx.send(message)
+
+@commands.has_any_role('TR Scientist')
+@bot.command()
+async def purge(ctx, limit=10, matches):
+    def check_msg(msg):
+        if matches is not None:
+            pat = r'\d{4}\s*\d{4}\s*\d{4}\s*'
+            if re.search(pat, msg.content) is None:            
+                return False
+        return True
     
+    deleted = await ctx.channel.purge(limit=limit, check=check_msg)
+    msg = await ctx.send('Deleted {} message(s)'.format(len(deleted))
     
 # =============================================================================
 # Main
