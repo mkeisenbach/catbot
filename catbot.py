@@ -343,12 +343,12 @@ async def reload_gyms(ctx):
 
 @bot.command(pass_context=True)
 async def get_invite(ctx):
-    if ctx.message.server is None:
+    if ctx.message.guild is None:
         msg = 'Please use this command from a server channel.'
         await ctx.message.author.send(msg)
         return
 
-    if ctx.message.server.name == "Team Rocket Bots and Automation Division":
+    if ctx.message.guild.name == "Team Rocket Bots and Automation Division":
         link = await ctx.channel.create_invite(
             max_age=3600*24, max_use=1, unique=True)
         if link is not None:
