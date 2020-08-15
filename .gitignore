@@ -4,4 +4,5 @@ gyms_fremont_newark.csv
 gyms_fremont_newark.xlsx
 Gyms.xlsx
 discord_key.sh
-.pylint.d/catbot1.stats
+.pylint.d
+.spyproject
