@@ -348,10 +348,12 @@ async def get_invite(ctx):
         await ctx.message.author.send(msg)
         return
 
-    if ctx.message.server.name == "(Official) Pokémon GO: Fremont":
-        link = await ctx.channel.create_invite(max_age=3600*24, max_use=1, unique=True)
+    if ctx.message.server.name == "Test Server":
+        link = await ctx.channel.create_invite(
+            max_age=3600*24, max_use=1, unique=True)
         if link is not None:
-            await ctx.message.author.send('Here is your invite {}'.format(link))
+            await ctx.message.author.send(
+                'Here is your invite {}'.format(link))
             await ctx.send('Invite sent via dm')
         else:
             await ctx.send('Unable to create invite')
