@@ -348,7 +348,7 @@ async def get_invite(ctx):
         await ctx.message.author.send(msg)
         return
 
-    if ctx.message.server.name == "Test Server":
+    if ctx.message.server.name == "Team Rocket Bots and Automation Division":
         link = await ctx.channel.create_invite(
             max_age=3600*24, max_use=1, unique=True)
         if link is not None:
