@@ -10,6 +10,7 @@ Catbot 2.0 uses discord.py version 1.x
 import sys
 import os
 import re
+import asyncio
 import datetime as dt
 from discord import utils
 from discord.ext import commands
@@ -382,7 +383,13 @@ async def purge(ctx, limit=None):
 
     # limit is the number of messages to search through
     deleted = await ctx.channel.purge(limit=limit, check=check_msg)
-    await ctx.send('Deleted {} message(s)'.format(len(deleted)))
+
+    # debug
+    for msg in deleted:
+        print(msg.content)
+
+    await ctx.send('Deleted {} message(s)'.format(len(deleted)),
+                   delete_after=5)
 
 # =============================================================================
 # Main
