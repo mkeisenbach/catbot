@@ -373,7 +373,7 @@ async def do(ctx, *args):
 @bot.command()
 async def purge(ctx, limit=10):
     def check_msg(msg):
-        pat = r'\d{4}\s*\d{4}\s*\d{4}\s*'
+        pat = r'\d{4}-?\s*\d{4}-?\s*\d{4}\s*'
         if re.search(pat, msg.content) is None:
             return False
         return True
