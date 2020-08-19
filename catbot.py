@@ -400,8 +400,7 @@ async def host(ctx, boss, mins, *args):
         await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
         return
 
-    content = '{} hatching in {} mins // React with Team emoji for invite //\
- Hosted by {}'\
+    content = '{0} {1} // Hosted by {2} // React with Team emoji for invite //'\
         .format(boss.title(), mins, ctx.message.author.display_name)
     if len(args) > 0:
         content = content + '\nNote: ' + ' '.join(args)
