@@ -376,7 +376,7 @@ async def purge_friendcodes(ctx, limit=None):
     def check_msg(msg):
         if msg.id == ctx.message.id:
             return True
-        pat = r'\d{4}-?\s*\d{4}-?\s*\d{4}\s*'
+        pat = r'(^|\D)\d{4}[-\s]*\d{4}[-\s]*\d{4}($|\D)'
         if re.search(pat, msg.content) is None:
             return False
         return True
