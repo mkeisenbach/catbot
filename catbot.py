@@ -394,7 +394,7 @@ async def purge_friendcodes(ctx, limit=None):
 
 
 @bot.command()
-async def host(ctx, boss, mins, notes):
+async def host(ctx, boss, mins, notes=''):
     report_channel = utils.get(ctx.guild.channels, name='💥-hosting-raids')
     if report_channel is None:
         await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
