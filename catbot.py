@@ -388,7 +388,7 @@ async def purge_friendcodes(ctx, limit=None):
     for msg in deleted:
         print(msg.content)
 
-    await ctx.send('Deleted {} message(s)'.format(len(deleted)),
+    await ctx.send('Deleted {} message(s)'.format(len(deleted)-1),
                    delete_after=5)
 
 # =============================================================================
