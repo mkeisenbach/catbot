@@ -291,7 +291,8 @@ async def raid(ctx, boss, time_left, *args):
         return
 
     if not time_left.isnumeric():
-        await ctx.send('"{}" is not a number. Minutes remaining should be a number'.format(time_left))
+        await ctx.send('"{}" is not a number. \
+                       Minutes remaining should be a number'.format(time_left))
         return
 
     if boss.lower() in mention:
@@ -370,7 +371,7 @@ async def do(ctx, *args):
     await ctx.send(message)
 
 
-@commands.has_any_role('TR Scientist', 'Admin')
+@commands.has_any_role('TR Scientist', 'Admin', 'mod')
 @bot.command()
 async def purge_friendcodes(ctx, limit=None):
     def check_msg(msg):
@@ -390,6 +391,23 @@ async def purge_friendcodes(ctx, limit=None):
 
     await ctx.send('Deleted {} message(s)'.format(len(deleted)-1),
                    delete_after=5)
+
+
+@bot.command()
+async def host(ctx, tier, boss, mins):
+    report_channel = utils.get(ctx.guild.channels, name='💥-hosting-raids')
+    if report_channel is None:
+        await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
+        return
+
+    content = 'Host: {}, T{} {} // hatching in {} mins //\
+        REACT WITH TEAM EMOJI TO GET INVITED'\
+            .format(tier, boss, mins, ctx.message.author.mention)
+
+    await report_channel.send(content)
+    await ctx.send('Raid reported to ' + report_channel.mention,
+                   delete_after=5)
+
 
 # =============================================================================
 # Main
