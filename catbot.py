@@ -394,16 +394,17 @@ async def purge_friendcodes(ctx, limit=None):
 
 
 @bot.command()
-async def host(ctx, boss, mins, notes=''):
+async def host(ctx, boss, mins, *args):
     report_channel = utils.get(ctx.guild.channels, name='💥-hosting-raids')
     if report_channel is None:
         await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
         return
 
-    content = '{0} hatching in {1} mins // React with Team emoji for invite\n\
-        Hosted by {3} // {2}'\
-        .format(boss.title(), mins, notes, ctx.message.author)
-
+    content = '{} hatching in {} mins // React with Team emoji for invite //\
+ Hosted by {}'\
+        .format(boss.title(), mins, ctx.message.author.display_name)
+    if len(args) > 0:
+        content = content + '\nNote: ' + ' '.join(args)
     await report_channel.send(content)
     await ctx.send('Raid reported to ' + report_channel.mention,
                    delete_after=5)
