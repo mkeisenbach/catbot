@@ -400,9 +400,8 @@ async def host(ctx, tier, boss, mins):
         await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
         return
 
-    content = 'Host: {}, T{} {} // hatching in {} mins //\
-        REACT WITH TEAM EMOJI TO GET INVITED'\
-            .format(tier, boss, mins, ctx.message.author.mention)
+    content = 'Host: {3}, T{0} {1} // hatching in {2} mins //React with Team Emoji for invite'\
+        .format(tier, boss, mins, ctx.message.author.mention)
 
     await report_channel.send(content)
     await ctx.send('Raid reported to ' + report_channel.mention,
