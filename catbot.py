@@ -442,9 +442,16 @@ async def host(ctx, *args):
 
     msg = await report_channel.send(content)
 
-    await msg.add_reaction(utils.get(ctx.guild.emojis, name='m7instinctlogo'))
-    await msg.add_reaction(utils.get(ctx.guild.emojis, name='m7mysticlogo'))
-    await msg.add_reaction(utils.get(ctx.guild.emojis, name='m7valorlogo'))
+    instinct_emoji = utils.get(ctx.guild.emojis, name='m7instinctlogo')
+    mystic_emoji = utils.get(ctx.guild.emojis, name='m7mysticlogo')
+    valor_emoji = utils.get(ctx.guild.emojis, name='m7valorlogo')
+
+    if instinct_emoji is not None:
+        await msg.add_reaction(instinct_emoji)
+    if mystic_emoji is not None:
+        await msg.add_reaction(mystic_emoji)
+    if valor_emoji is not None:
+        await msg.add_reaction(valor_emoji)
 
     await ctx.send('Raid reported to ' + report_channel.mention,
                    delete_after=5)
