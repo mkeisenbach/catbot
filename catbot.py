@@ -419,7 +419,7 @@ async def host(ctx, *args):
 
     args = parse_host_args(args[1:])
 
-    if len(args) == 0:
+    if len(args) == 0 or args[1] > 60:
         content = \
         'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)'
         await ctx.send(content)
