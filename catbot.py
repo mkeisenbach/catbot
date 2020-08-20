@@ -440,7 +440,7 @@ async def host(ctx, *args):
 
     if notes != '':
         friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
-        friendcode_pat.sub('<Friend code removed>', notes)
+        notes = friendcode_pat.sub('<Friend code removed>', notes)
 
         content = content + '\nNote: ' + notes
 
