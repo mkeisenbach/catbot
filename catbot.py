@@ -44,6 +44,9 @@ ERR_LEGENDARY_ROLE_MISSING = 'Legendary Raid role not found'
 ERR_RAID_NOT_FOUND = 'Raid not found'
 ERR_INVALID_DATETIME = "Invalid date or time"
 
+FRIEND_CODE_PAT = r'(^|\D)\d{4}[-\s]*\d{4}[-\s]*\d{4}($|\D)'
+
+
 # =============================================================================
 # Helper and test functions
 # =============================================================================
@@ -377,8 +380,7 @@ async def purge_friendcodes(ctx, limit=None):
     def check_msg(msg):
         if msg.id == ctx.message.id:
             return True
-        pat = r'(^|\D)\d{4}[-\s]*\d{4}[-\s]*\d{4}($|\D)'
-        if re.search(pat, msg.content) is None:
+        if re.search(FRIEND_CODE_PAT, msg.content) is None:
             return False
         return True
 
@@ -396,7 +398,7 @@ async def purge_friendcodes(ctx, limit=None):
 def parse_host_args(rest):
     rest = ' '.join(rest)
 
-    p = r'(hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
+    p = r'(hatch|end|start)\D*(\d{1,2}) ?(?:min)?(?:s|utes?)? ?(.*)'
     m = re.match(p, rest)
     if m:
         return m.groups()
@@ -432,12 +434,13 @@ async def host(ctx, *args):
     if mins == 'now':
         content = \
             '{0} starting {2} // Hosted by {3} // React with team emoji for invite //'\
-            .format(boss.title(), verb, mins, ctx.message.author.display_name)
+            .format(boss.title(), mins, ctx.message.author.display_name)
     else:
         content = \
             '{0} {1}ing in {2} mins // Hosted by {3} // React with team emoji for invite //'\
             .format(boss.title(), verb, mins, ctx.message.author.display_name)
-    if notes != '':
+
+    if notes != '' and re.match(FRIEND_CODE_PAT, notes) is None:
         content = content + '\nNote: ' + notes
 
     msg = await report_channel.send(content)
