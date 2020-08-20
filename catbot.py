@@ -445,9 +445,16 @@ async def host(ctx, *args):
     await msg.add_reaction('🇮')
     await msg.add_reaction('🇲')
     await msg.add_reaction('🇻')
-    
+
     await ctx.send('Raid reported to ' + report_channel.mention,
                    delete_after=5)
+
+
+@bot.command()
+async def custom_emoji_test(ctx):
+    emoji = utils.get(ctx.guild.emojis, name='instinct')
+    msg = await ctx.send('Test message with reaction')
+    await msg.add_reaction(emoji)
 
 
 # =============================================================================
