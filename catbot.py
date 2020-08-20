@@ -440,7 +440,12 @@ async def host(ctx, *args):
     if notes != '':
         content = content + '\nNote: ' + notes
 
-    await report_channel.send(content)
+    msg = await report_channel.send(content)
+
+    await msg.add_reaction('🇮')
+    await msg.add_reaction('🇲')
+    await msg.add_reaction('🇻')
+    
     await ctx.send('Raid reported to ' + report_channel.mention,
                    delete_after=5)
 
