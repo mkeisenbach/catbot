@@ -431,7 +431,7 @@ async def host(ctx, *args):
 
     if mins == 'now':
         content = \
-            '{0} starting {2} // Hosted by {3} // React with team emoji for invite //'\
+            '{0} starting {1} // Hosted by {2} // React with team emoji for invite //'\
             .format(boss.title(), mins, ctx.message.author.display_name)
     else:
         content = \
