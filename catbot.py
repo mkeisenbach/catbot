@@ -393,17 +393,49 @@ async def purge_friendcodes(ctx, limit=None):
                    delete_after=5)
 
 
+def parse_host_args(rest):
+    rest = ' '.join(rest)
+
+    p = r'(hatch|end|start)\D*(\d+) ?(min)?(s|utes?)? ?(.*)'
+    m = re.match(p, rest)
+    if m:
+        return m.groups()
+
+    p = r'(start|hatch)\w* (now) ?(.*)'
+    m = re.match(p, rest)
+    if m:
+        return m.groups()
+    return []
+
+
 @bot.command()
-async def host(ctx, boss, mins, *args):
+async def host(ctx, *args):
     report_channel = utils.get(ctx.guild.channels, name='💥-hosting-raids')
     if report_channel is None:
         await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
         return
 
-    content = '{0} {1} // Hosted by {2} // React with Team emoji for invite //'\
-        .format(boss.title(), mins, ctx.message.author.display_name)
-    if len(args) > 0:
-        content = content + '\nNote: ' + ' '.join(args)
+    boss = args[0]
+
+    args = parse_host_args(args[1:])
+    verb = args[0]
+    mins = args[1]
+    if len(args) > 2:
+        notes = args[-1]
+    else:
+        notes = None
+
+    if mins == 'now':
+        content = \
+            '{0} {1}ing {2} // Hosted by {3} // React with team emoji for invite //'\
+            .format(boss.title(), verb, mins, ctx.message.author.display_name)
+    else:
+        content = \
+            '{0} {1}ing in {2} mins // Hosted by {3} // React with team emoji for invite //'\
+            .format(boss.title(), verb, mins, ctx.message.author.display_name)
+    if notes is not None:
+        content = content + '\nNote: ' + notes
+
     await report_channel.send(content)
     await ctx.send('Raid reported to ' + report_channel.mention,
                    delete_after=5)
