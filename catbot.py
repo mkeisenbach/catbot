@@ -398,7 +398,7 @@ async def purge_friendcodes(ctx, limit=None):
 def parse_host_args(rest):
     rest = ' '.join(rest)
 
-    p = r'(hatch|end|start)\D*(\d{1,2}) ?(?:min)?(?:s|utes?)? ?(.*)'
+    p = r'(hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
     m = re.match(p, rest)
     if m:
         return m.groups()
