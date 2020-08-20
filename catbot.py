@@ -396,7 +396,7 @@ async def purge_friendcodes(ctx, limit=None):
 def parse_host_args(rest):
     rest = ' '.join(rest)
 
-    p = r'(hatch|end|start)\D*(\d+) ?(min)?(s|utes?)? ?(.*)'
+    p = r'(hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
     m = re.match(p, rest)
     if m:
         return m.groups()
@@ -418,12 +418,16 @@ async def host(ctx, *args):
     boss = args[0]
 
     args = parse_host_args(args[1:])
+
+    if len(args) == 0:
+        content = \
+        'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)'
+        await ctx.send(content)
+        return
+
     verb = args[0]
     mins = args[1]
-    if len(args) > 2:
-        notes = args[-1]
-    else:
-        notes = None
+    notes = args[-1]
 
     if mins == 'now':
         content = \
