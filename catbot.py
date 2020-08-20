@@ -442,19 +442,12 @@ async def host(ctx, *args):
 
     msg = await report_channel.send(content)
 
-    await msg.add_reaction('🇮')
-    await msg.add_reaction('🇲')
-    await msg.add_reaction('🇻')
+    await msg.add_reaction(utils.get(ctx.guild.emojis, name='m7instinctlogo'))
+    await msg.add_reaction(utils.get(ctx.guild.emojis, name='m7mysticlogo'))
+    await msg.add_reaction(utils.get(ctx.guild.emojis, name='m7valorlogo'))
 
     await ctx.send('Raid reported to ' + report_channel.mention,
                    delete_after=5)
-
-
-@bot.command()
-async def custom_emoji_test(ctx):
-    emoji = utils.get(ctx.guild.emojis, name='instinct')
-    msg = await ctx.send('Test message with reaction')
-    await msg.add_reaction(emoji)
 
 
 # =============================================================================
