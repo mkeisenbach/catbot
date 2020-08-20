@@ -401,7 +401,7 @@ def parse_host_args(rest):
     if m:
         return m.groups()
 
-    p = r'(start|hatch)\w* (now) ?(.*)'
+    p = r'(start|hatch)?\w* ?(now) ?(.*)'
     m = re.match(p, rest)
     if m:
         return m.groups()
@@ -431,13 +431,13 @@ async def host(ctx, *args):
 
     if mins == 'now':
         content = \
-            '{0} {1}ing {2} // Hosted by {3} // React with team emoji for invite //'\
+            '{0} starting {2} // Hosted by {3} // React with team emoji for invite //'\
             .format(boss.title(), verb, mins, ctx.message.author.display_name)
     else:
         content = \
             '{0} {1}ing in {2} mins // Hosted by {3} // React with team emoji for invite //'\
             .format(boss.title(), verb, mins, ctx.message.author.display_name)
-    if notes is not None:
+    if notes != '':
         content = content + '\nNote: ' + notes
 
     await report_channel.send(content)
