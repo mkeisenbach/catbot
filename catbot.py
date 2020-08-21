@@ -374,7 +374,7 @@ async def do(ctx, *args):
 
 @commands.has_any_role('TR Scientist', 'Admin', 'mod')
 @bot.command()
-async def purge_friendcodes(ctx, limit=None):
+async def purge_fc(ctx, limit=None):
     def check_msg(msg):
         if msg.id == ctx.message.id:
             return True
