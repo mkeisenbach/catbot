@@ -376,6 +376,8 @@ async def do(ctx, *args):
 @bot.command()
 async def purge_fc(ctx, limit=None):
     def check_msg(msg):
+        if msg.pinned:
+            return False
         if msg.id == ctx.message.id:
             return True
         if re.search(r'(^|\D)\d{4}[-\s]*\d{4}[-\s]*\d{4}($|\D)', msg.content) is None:
