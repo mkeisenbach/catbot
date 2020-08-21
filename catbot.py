@@ -383,6 +383,8 @@ async def purge_friendcodes(ctx, limit=None):
         return True
 
     # limit is the number of messages to search through
+    if limit is not None:
+        limit = int(limit)
     deleted = await ctx.channel.purge(limit=limit, check=check_msg)
 
     # debug
