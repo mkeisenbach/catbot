@@ -434,21 +434,22 @@ async def host(ctx, *args):
     notes = args[-1]
 
     if mins == 'now':
-        content = \
-            '{0} starting {1} // Hosted by {2} // React with team emoji for invite //'\
-            .format(boss.title(), mins, ctx.message.author.display_name)
+        when = '{}ing now'.format(verb)
     else:
-        content = \
-            '{0} {1}ing in {2} mins // Hosted by {3} // React with team emoji for invite //'\
-            .format(boss.title(), verb, mins, ctx.message.author.display_name)
+        when = '{}ing in {}'.format(verb, mins)
 
     if notes != '':
         friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
         notes = friendcode_pat.sub('<Friend code removed>', notes)
 
-        content = content + '\nNote: ' + notes
+    embed = Embed(title=boss.title(),
+                  description='React with team emoji for invite')
+    embed.add_field(name="Host", value=ctx.author)
+    embed.add_field(name="When", value=when)
+    embed.add_field(name="Notes", value=notes)
 
-    msg = await report_channel.send(content)
+    msg = await report_channel.send(embed=embed)
+
     await ctx.send('Raid reported to ' + report_channel.mention,
                    delete_after=5)
 
