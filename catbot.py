@@ -463,6 +463,7 @@ async def host(ctx, *args):
     if valor_emoji is not None:
         await msg.add_reaction(valor_emoji)
 
+    await ctx.message.delete()
 
 # =============================================================================
 # Main
