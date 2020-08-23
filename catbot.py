@@ -13,6 +13,7 @@ import re
 import asyncio
 import datetime as dt
 from discord import utils
+from discord import Embed
 from discord.ext import commands
 from dateutil.parser import parse
 from gyms import Gyms
@@ -464,6 +465,29 @@ async def host(ctx, *args):
 
     await ctx.message.delete()
 
+
+@bot.command()
+async def show_embed(ctx, *args):
+    args = parse_host_args(args)
+
+    if len(args) == 0:
+        content = \
+        'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)'
+        await ctx.send(content)
+        return
+
+    boss = args[0]
+    verb = args[1]
+    mins = args[2]
+    notes = args[-1]
+
+    embed = Embed(title=boss)
+    embed.add_field(name="Host", value=ctx.author)
+    embed.add_field(name="When", value='{} in {}'.format(verb, mins))
+    embed.add_field(name="Notes", value=notes)
+
+    await ctx.message.send(embed)
+    
 # =============================================================================
 # Main
 # =============================================================================
