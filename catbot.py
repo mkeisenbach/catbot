@@ -419,7 +419,7 @@ async def host(ctx, *args):
         await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
         return
 
-    args = parse_host_args(args[1:])
+    args = parse_host_args(args)
 
     if len(args) == 0:
         content = \
