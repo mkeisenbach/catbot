@@ -486,7 +486,7 @@ async def show_embed(ctx, *args):
     embed.add_field(name="When", value='{} in {}'.format(verb, mins))
     embed.add_field(name="Notes", value=notes)
 
-    await ctx.send(embed)
+    await ctx.send(embed=embed)
     
 # =============================================================================
 # Main
