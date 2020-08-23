@@ -397,16 +397,16 @@ async def purge_fc(ctx, limit=None):
                    delete_after=5)
 
 
-def parse_host_args(rest):
-    rest = ' '.join(rest)
+def parse_host_args(args):
+    args = ' '.join(args)
 
-    p = r'(hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
-    m = re.match(p, rest)
+    p = r'(\w+) (hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
+    m = re.match(p, args)
     if m:
         return m.groups()
 
     p = r'(start|hatch)?\w* ?(now) ?(.*)'
-    m = re.match(p, rest)
+    m = re.match(p, args)
     if m:
         return m.groups()
     return []
@@ -419,8 +419,6 @@ async def host(ctx, *args):
         await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
         return
 
-    boss = args[0]
-
     args = parse_host_args(args[1:])
 
     if len(args) == 0:
@@ -429,8 +427,9 @@ async def host(ctx, *args):
         await ctx.send(content)
         return
 
-    verb = args[0]
-    mins = args[1]
+    boss = args[0]
+    verb = args[1]
+    mins = args[2]
     notes = args[-1]
 
     if mins == 'now':
