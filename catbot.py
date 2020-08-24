@@ -442,7 +442,7 @@ async def host(ctx, *args):
         friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
         notes = friendcode_pat.sub('<Friend code removed>', notes)
 
-    thumbnail = ''
+    thumbnail = Embed.Empty
     m = re.match('t([12345])', boss)
     if m is not None:
         level = int(m.groups()[0])
@@ -458,7 +458,7 @@ async def host(ctx, *args):
     embed.add_field(name="Host", value=ctx.author)
     embed.add_field(name="When", value=when)
     embed.add_field(name="Notes", value=notes)
-    embed.set_thumbnail(thumbnail)
+    embed.set_thumbnail(url=thumbnail)
 
     msg = await report_channel.send(embed=embed)
 
