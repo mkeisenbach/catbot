@@ -422,6 +422,14 @@ def get_egg_url(level):
         thumbnail = 'legendary_egg.png'
     return URL_BASE+thumbnail
 
+
+def get_boss_url(boss):
+    URL_BASE = 'https://ironcreek.net/catbot/pokemon/'
+    if boss.lower() == 'heatran':
+        return URL_BASE + '485.png'
+    return Embed.Empty
+
+
 @bot.command()
 async def host(ctx, *args):
     report_channel = utils.get(ctx.guild.channels, name='💥-hosting-raids')
@@ -455,6 +463,8 @@ async def host(ctx, *args):
     m = re.match('t([12345])', boss)
     if m is not None:
         thumbnail = get_egg_url(int(m.groups()[0]))
+    else:
+        thumbnail = get_boss_url(boss)
 
     embed = Embed(title=boss.title(),
                   description='React with team emoji for invite')
