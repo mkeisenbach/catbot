@@ -18,6 +18,7 @@ from discord.ext import commands
 from dateutil.parser import parse
 from gyms import Gyms
 
+BOT_PREFIX = '!'
 gyms = None
 gymfile = 'gyms.csv'
 legendaries = []
@@ -186,14 +187,13 @@ def test_do():
 # =============================================================================
 # Bot code
 # =============================================================================
-bot_prefix = '!'
-bot = commands.Bot(command_prefix=bot_prefix)
+bot = commands.Bot(command_prefix=BOT_PREFIX)
 
 
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
-    print('Bot Prefix: ', bot_prefix)
+    print('Bot Prefix: ', BOT_PREFIX)
 
 
 @bot.event
@@ -432,7 +432,14 @@ def get_boss_url(boss):
 
 @bot.command()
 async def host(ctx, *args):
-    report_channel = utils.get(ctx.guild.channels, name='💥-hosting-raids')
+    report_channel = None
+
+    if ctx.guild is None:
+        await ctx.send('This command can only be used on a server.')
+        return
+    else:
+        report_channel = utils.get(ctx.guild.channels, name='💥-hosting-raids')
+
     if report_channel is None:
         await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
         return
