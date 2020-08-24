@@ -459,12 +459,12 @@ async def host(ctx, *args):
         friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
         notes = friendcode_pat.sub('<Friend code removed>', notes)
 
-    thumbnail = Embed.Empty
+    thumbnail = ''
     m = re.match('t([12345])', boss)
     if m is not None:
         thumbnail = get_egg_url(int(m.groups()[0]))
-    else:
-        thumbnail = get_boss_url(boss)
+#    else:
+#        thumbnail = get_boss_url(boss)
 
     embed = Embed(title=boss.title(),
                   description='React with team emoji for invite')
