@@ -436,7 +436,7 @@ async def host(ctx, *args):
     if mins == 'now':
         when = '{}ing now'.format(verb)
     else:
-        when = '{}ing in {}'.format(verb, mins)
+        when = '{}ing in {} mins'.format(verb, mins)
 
     if notes != '':
         friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
@@ -457,7 +457,10 @@ async def host(ctx, *args):
                   description='React with team emoji for invite')
     embed.add_field(name="Host", value=ctx.author)
     embed.add_field(name="When", value=when)
-    embed.add_field(name="Notes", value=notes)
+
+    if notes != '':
+        embed.add_field(name="Notes", value=notes)
+
     embed.set_thumbnail(url=thumbnail)
 
     msg = await report_channel.send(embed=embed)
