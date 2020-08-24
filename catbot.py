@@ -406,7 +406,7 @@ def parse_host_args(args):
     if m:
         return m.groups()
 
-    p = r'(start|hatch)?\w* ?(now) ?(.*)'
+    p = r'(\w+) (start|hatch)?\w* ?(now) ?(.*)'
     m = re.match(p, args)
     if m:
         return m.groups()
@@ -451,7 +451,7 @@ async def host(ctx, *args):
     notes = args[-1]
 
     if mins == 'now':
-        when = '{}ing now'.format(verb)
+        when = mins
     else:
         when = '{}ing in {} mins'.format(verb, mins)
 
