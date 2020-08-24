@@ -442,11 +442,23 @@ async def host(ctx, *args):
         friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
         notes = friendcode_pat.sub('<Friend code removed>', notes)
 
+    thumbnail = ''
+    m = re.match('t([12345])', boss)
+    if m is not None:
+        level = m.groups()[0]
+        if level <= 2:
+            thumbnail = 'https://ironcreek.net/catbot/eggs/egg12.png'
+        if level <= 4:
+            thumbnail = 'https://ironcreek.net/catbot/eggs/egg34.png'
+        else:
+            thumbnail = 'https://ironcreek.net/catbot/eggs/legendary_egg.png'
+
     embed = Embed(title=boss.title(),
                   description='React with team emoji for invite')
     embed.add_field(name="Host", value=ctx.author)
     embed.add_field(name="When", value=when)
     embed.add_field(name="Notes", value=notes)
+    embed.set_thumbnail(thumbnail)
 
     msg = await report_channel.send(embed=embed)
 
