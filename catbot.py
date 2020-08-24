@@ -445,7 +445,7 @@ async def host(ctx, *args):
     thumbnail = ''
     m = re.match('t([12345])', boss)
     if m is not None:
-        level = m.groups()[0]
+        level = int(m.groups()[0])
         if level <= 2:
             thumbnail = 'https://ironcreek.net/catbot/eggs/egg12.png'
         if level <= 4:
