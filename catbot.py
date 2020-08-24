@@ -412,6 +412,15 @@ def parse_host_args(args):
         return m.groups()
     return []
 
+def get_egg_url(level):
+    URL_BASE = 'https://ironcreek.net/catbot/eggs/'
+    if level <= 2:
+        thumbnail = 'egg12.png'
+    elif level <= 4:
+        thumbnail = 'egg34.png'
+    else:
+        thumbnail = 'legendary_egg.png'
+    return URL_BASE+thumbnail
 
 @bot.command()
 async def host(ctx, *args):
@@ -445,13 +454,7 @@ async def host(ctx, *args):
     thumbnail = Embed.Empty
     m = re.match('t([12345])', boss)
     if m is not None:
-        level = int(m.groups()[0])
-        if level <= 2:
-            thumbnail = 'https://ironcreek.net/catbot/eggs/egg12.png'
-        if level <= 4:
-            thumbnail = 'https://ironcreek.net/catbot/eggs/egg34.png'
-        else:
-            thumbnail = 'https://ironcreek.net/catbot/eggs/legendary_egg.png'
+        thumbnail = get_egg_url(int(m.groups()[0]))
 
     embed = Embed(title=boss.title(),
                   description='React with team emoji for invite')
