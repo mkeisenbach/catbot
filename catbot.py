@@ -474,7 +474,8 @@ async def host(ctx, *args):
     if notes != '':
         embed.add_field(name="Notes", value=notes)
 
-    embed.set_thumbnail(url=thumbnail)
+    if thumbnail != '':
+        embed.set_thumbnail(url=thumbnail)
 
     msg = await report_channel.send(embed=embed)
 
