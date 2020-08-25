@@ -430,6 +430,14 @@ def get_boss_url(boss):
     return Embed.Empty
 
 
+def censor_notes(notes):
+    friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
+    notes = friendcode_pat.sub('<Friend code removed>', notes)
+
+    dm_me_pat = re.compile(r'dm\s+(me)?', re.IGNORECASE)
+    notes = dm_me_pat.sub('...', notes)
+    return notes
+
 @bot.command()
 async def host(ctx, *args):
     report_channel = None
@@ -463,8 +471,7 @@ async def host(ctx, *args):
         when = '{}ing in {} mins'.format(verb, mins)
 
     if notes != '':
-        friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
-        notes = friendcode_pat.sub('<Friend code removed>', notes)
+        notes = censor_notes(notes)
 
     thumbnail = ''
     m = re.match('t([12345])', boss)
