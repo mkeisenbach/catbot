@@ -489,16 +489,10 @@ async def host(ctx, *args):
     await ctx.send('Raid reported to ' + report_channel.mention,
                    delete_after=5)
 
-    instinct_emoji = utils.get(ctx.guild.emojis, name='m7instinctlogo')
-    mystic_emoji = utils.get(ctx.guild.emojis, name='m7mysticlogo')
-    valor_emoji = utils.get(ctx.guild.emojis, name='m7valorlogo')
-
-    if instinct_emoji is not None:
-        await msg.add_reaction(instinct_emoji)
-    if mystic_emoji is not None:
-        await msg.add_reaction(mystic_emoji)
-    if valor_emoji is not None:
-        await msg.add_reaction(valor_emoji)
+    for team_logo in ['m7instinctlogo', 'm7mysticlogo', 'm7valorlogo']:
+        emoji = utils.get(ctx.guild.emojis, name=team_logo)
+        if emoji is not None:
+            await msg.add_reaction(emoji)
 
     await ctx.message.delete()
 
