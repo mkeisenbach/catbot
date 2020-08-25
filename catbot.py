@@ -401,16 +401,17 @@ async def purge_fc(ctx, limit=None):
 def parse_host_args(args):
     args = ' '.join(args)
 
-    p = r'(\w+) (hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
+    p = r'(.+) (hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
     m = re.match(p, args)
     if m:
         return m.groups()
 
-    p = r'(\w+) (start|hatch)?\w* ?(now) ?(.*)'
+    p = r'(.+) (start|hatch)\w* ?(now) ?(.*)'
     m = re.match(p, args)
     if m:
         return m.groups()
     return []
+
 
 def get_egg_url(level):
     URL_BASE = 'https://ironcreek.net/catbot/eggs/'
@@ -437,6 +438,7 @@ def censor_notes(notes):
     dm_me_pat = re.compile(r'dm\s+(me)?', re.IGNORECASE)
     notes = dm_me_pat.sub('...', notes)
     return notes
+
 
 @bot.command()
 async def host(ctx, *args):
