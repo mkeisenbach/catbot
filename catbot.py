@@ -398,19 +398,38 @@ async def purge_fc(ctx, limit=None):
                    delete_after=5)
 
 
-def parse_host_args(args):
+def parse_host_args(args: list):
     args = ' '.join(args)
 
     p = r'(.+) (hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
-    m = re.match(p, args)
+    m = re.match(p, args, re.IGNORECASE)
     if m:
-        return m.groups()
+        return {'boss': m.groups()[0], 'verb': m.groups()[1],
+                'mins': m.groups()[2], 'notes': m.groups()[3]}
+    return {}
+
+
+def parse_host_now(args: list):
+    args = ' '.join(args)
 
     p = r'(.+) (start|hatch)\w* ?(now) ?(.*)'
-    m = re.match(p, args)
+    m = re.match(p, args, re.IGNORECASE)
     if m:
-        return m.groups()
-    return []
+        return {'boss': m.groups()[0], 'verb': m.groups()[1],
+                'mins': '0', 'notes': m.groups()[3]}
+    return {}
+
+
+def parse_host_mins_left(args: list):
+    args = ' '.join(args)
+
+    p = r'(.+) (\d+) ?(?:min)?(?:s|utes?)? ?(left) ?(.*)'
+    m = re.match(p, args, re.IGNORECASE)
+    if m:
+        return {'boss': m.groups()[0], 'mins': m.groups()[1],
+                'verb': 'end', 'notes': m.groups()[3]}
+
+    return {}
 
 
 def get_egg_url(level):
@@ -435,7 +454,7 @@ def censor_notes(notes):
     friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
     notes = friendcode_pat.sub('<Friend code removed>', notes)
 
-    dm_me_pat = re.compile(r'dm\s+(me)?', re.IGNORECASE)
+    dm_me_pat = re.compile(r'dm(\s+|$)(me)?', re.IGNORECASE)
     notes = dm_me_pat.sub('...', notes)
     return notes
 
@@ -454,46 +473,42 @@ async def host(ctx, *args):
         await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
         return
 
-    args = parse_host_args(args)
+    parsed = parse_host_args(args)
+    if not parsed:
+        parsed = parse_host_now(args)
+    if not parsed:
+        parsed = parse_host_mins_left(args)
 
-    if len(args) == 0:
+    if not parsed:
         content = \
-        'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)'
+        'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)\nExample: !host heatran ends in 30 mins'
         await ctx.send(content)
         return
 
-    boss = args[0]
-    verb = args[1]
-    mins = args[2]
-    notes = args[-1]
+    when = '{}ing in {} mins'.format(parsed["verb"], parsed["mins"])
 
-    if mins == 'now':
-        when = mins
-    else:
-        when = '{}ing in {} mins'.format(verb, mins)
-
-    if notes != '':
-        notes = censor_notes(notes)
+    if parsed["notes"] != '':
+        parsed["notes"] = censor_notes(parsed["notes"])
 
     thumbnail = ''
-    m = re.match('t([12345])', boss)
+    m = re.match('t([12345])', parsed["boss"])
     if m is not None:
         thumbnail = get_egg_url(int(m.groups()[0]))
 #    else:
-#        thumbnail = get_boss_url(boss)
+#        thumbnail = get_boss_url(parsed["boss"])
 
-    embed = Embed(title=boss.title(),
+    embed = Embed(title=parsed["boss"].title(),
                   description='React with team emoji for invite')
     embed.add_field(name="Host", value=ctx.author)
     embed.add_field(name="When", value=when)
 
-    if notes != '':
-        embed.add_field(name="Notes", value=notes)
+    if parsed["notes"] != '':
+        embed.add_field(name="Notes", value=parsed["notes"])
 
     if thumbnail != '':
         embed.set_thumbnail(url=thumbnail)
 
-    msg = await report_channel.send(embed=embed)
+    msg = await report_channel.send(embed=embed, delete_after=7200)
 
     await ctx.send('Raid reported to ' + report_channel.mention,
                    delete_after=5)
