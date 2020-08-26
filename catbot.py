@@ -139,6 +139,67 @@ def process_do(arg_str):
     return content
 
 
+def parse_host_args(args: list):
+    args = ' '.join(args)
+
+    p = r'(.+) (hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
+    m = re.match(p, args, re.IGNORECASE)
+    if m:
+        return {'boss': m.groups()[0], 'verb': m.groups()[1],
+                'mins': m.groups()[2], 'notes': m.groups()[3]}
+    return {}
+
+
+def parse_host_now(args: list):
+    args = ' '.join(args)
+
+    p = r'(.+) (start|hatch)\w* ?(now) ?(.*)'
+    m = re.match(p, args, re.IGNORECASE)
+    if m:
+        return {'boss': m.groups()[0], 'verb': m.groups()[1],
+                'mins': '0', 'notes': m.groups()[3]}
+    return {}
+
+
+def parse_host_mins_left(args: list):
+    args = ' '.join(args)
+
+    p = r'(.+) (\d+) ?(?:min)?(?:s|utes?)? ?(left) ?(.*)'
+    m = re.match(p, args, re.IGNORECASE)
+    if m:
+        return {'boss': m.groups()[0], 'mins': m.groups()[1],
+                'verb': 'end', 'notes': m.groups()[3]}
+
+    return {}
+
+
+def get_egg_url(level):
+    URL_BASE = 'https://ironcreek.net/catbot/eggs/'
+    if level <= 2:
+        thumbnail = 'egg12.png'
+    elif level <= 4:
+        thumbnail = 'egg34.png'
+    else:
+        thumbnail = 'legendary_egg.png'
+    return URL_BASE+thumbnail
+
+
+def get_boss_url(boss):
+    URL_BASE = 'https://ironcreek.net/catbot/pokemon/'
+    if boss.lower() == 'heatran':
+        return URL_BASE + '485.png'
+    return Embed.Empty
+
+
+def censor_notes(notes):
+    friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
+    notes = friendcode_pat.sub('<Friend code removed>', notes)
+
+    dm_me_pat = re.compile(r'dm(\s+|$)(me)?', re.IGNORECASE)
+    notes = dm_me_pat.sub('...', notes)
+    return notes
+
+
 # =============================================================================
 # Test functions
 # =============================================================================
@@ -396,67 +457,6 @@ async def purge_fc(ctx, limit=None):
 
     await ctx.send('Deleted {} message(s)'.format(len(deleted)-1),
                    delete_after=5)
-
-
-def parse_host_args(args: list):
-    args = ' '.join(args)
-
-    p = r'(.+) (hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
-    m = re.match(p, args, re.IGNORECASE)
-    if m:
-        return {'boss': m.groups()[0], 'verb': m.groups()[1],
-                'mins': m.groups()[2], 'notes': m.groups()[3]}
-    return {}
-
-
-def parse_host_now(args: list):
-    args = ' '.join(args)
-
-    p = r'(.+) (start|hatch)\w* ?(now) ?(.*)'
-    m = re.match(p, args, re.IGNORECASE)
-    if m:
-        return {'boss': m.groups()[0], 'verb': m.groups()[1],
-                'mins': '0', 'notes': m.groups()[3]}
-    return {}
-
-
-def parse_host_mins_left(args: list):
-    args = ' '.join(args)
-
-    p = r'(.+) (\d+) ?(?:min)?(?:s|utes?)? ?(left) ?(.*)'
-    m = re.match(p, args, re.IGNORECASE)
-    if m:
-        return {'boss': m.groups()[0], 'mins': m.groups()[1],
-                'verb': 'end', 'notes': m.groups()[3]}
-
-    return {}
-
-
-def get_egg_url(level):
-    URL_BASE = 'https://ironcreek.net/catbot/eggs/'
-    if level <= 2:
-        thumbnail = 'egg12.png'
-    elif level <= 4:
-        thumbnail = 'egg34.png'
-    else:
-        thumbnail = 'legendary_egg.png'
-    return URL_BASE+thumbnail
-
-
-def get_boss_url(boss):
-    URL_BASE = 'https://ironcreek.net/catbot/pokemon/'
-    if boss.lower() == 'heatran':
-        return URL_BASE + '485.png'
-    return Embed.Empty
-
-
-def censor_notes(notes):
-    friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
-    notes = friendcode_pat.sub('<Friend code removed>', notes)
-
-    dm_me_pat = re.compile(r'dm(\s+|$)(me)?', re.IGNORECASE)
-    notes = dm_me_pat.sub('...', notes)
-    return notes
 
 
 @bot.command()
