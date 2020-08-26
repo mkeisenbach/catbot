@@ -17,11 +17,14 @@ from discord import Embed
 from discord.ext import commands
 from dateutil.parser import parse
 from gyms import Gyms
+from pokemon import Pokemon
 
 BOT_PREFIX = '!'
 gyms = None
 gymfile = 'gyms.csv'
 legendaries = []
+pokemon = None
+pokemonfile = 'pokedex.csv'
 
 # =============================================================================
 # String constants
@@ -173,6 +176,15 @@ def parse_host_mins_left(args: list):
     return {}
 
 
+def censor_notes(notes):
+    friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
+    notes = friendcode_pat.sub('<Friend code removed>', notes)
+
+    dm_me_pat = re.compile(r'dm(\s+|$)(me)?', re.IGNORECASE)
+    notes = dm_me_pat.sub('...', notes)
+    return notes
+
+
 def get_egg_url(level):
     URL_BASE = 'https://ironcreek.net/catbot/eggs/'
     if level <= 2:
@@ -182,22 +194,6 @@ def get_egg_url(level):
     else:
         thumbnail = 'legendary_egg.png'
     return URL_BASE+thumbnail
-
-
-def get_boss_url(boss):
-    URL_BASE = 'https://ironcreek.net/catbot/pokemon/'
-    if boss.lower() == 'heatran':
-        return URL_BASE + '485.png'
-    return Embed.Empty
-
-
-def censor_notes(notes):
-    friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
-    notes = friendcode_pat.sub('<Friend code removed>', notes)
-
-    dm_me_pat = re.compile(r'dm(\s+|$)(me)?', re.IGNORECASE)
-    notes = dm_me_pat.sub('...', notes)
-    return notes
 
 
 # =============================================================================
@@ -494,8 +490,8 @@ async def host(ctx, *args):
     m = re.match('t([12345])', parsed["boss"])
     if m is not None:
         thumbnail = get_egg_url(int(m.groups()[0]))
-#    else:
-#        thumbnail = get_boss_url(parsed["boss"])
+    else:
+        thumbnail = pokemon.get_boss_url(parsed["boss"])
 
     embed = Embed(title=parsed["boss"].title(),
                   description='React with team emoji for invite')
@@ -565,6 +561,13 @@ try:
     print('Gyms loaded')
 except IOError:
     print('ERROR: Unable to load gyms from', gymfile)
+    sys.exit()
+
+try:
+    pokemon = Pokemon(pokemonfile)
+    print('Pokemon loaded')
+except IOError:
+    print('ERROR: Unable to load pokemon from', gymfile)
     sys.exit()
 
 if __name__ == "__main__":
