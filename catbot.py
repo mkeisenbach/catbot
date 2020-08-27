@@ -487,10 +487,13 @@ async def host(ctx, *args):
         parsed["notes"] = censor_notes(parsed["notes"])
 
     thumbnail = ''
-    m = re.match('t([12345])', parsed["boss"])
-    if m is not None:
-        thumbnail = get_egg_url(int(m.groups()[0]))
-    else:
+
+    if parsed["verb"] == 'hatch':
+        m = re.match('t([12345])', parsed["boss"], re.IGNORECASE)
+        if m is not None:
+            thumbnail = get_egg_url(int(m.groups()[0]))
+
+    if thumbnail == '':
         thumbnail = pokemon.get_boss_url(parsed["boss"])
 
     embed = Embed(title=parsed["boss"].title(),
