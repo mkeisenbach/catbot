@@ -303,11 +303,13 @@ async def egg(ctx, egg_level, until_hatch, *args):
         await ctx.send(ERR_LEGENDARY_ROLE_MISSING)
         return
 
+    mega_role = utils.get(ctx.guild.roles, name='MegaRaid')
+
     if not egg_level.isnumeric():
-        await ctx.send('"{}" is not a number. Egg levels should be 1-5'.format(egg_level))
+        await ctx.send('"{}" is not a number. Egg levels should be 1-6'.format(egg_level))
         return
-    if int(egg_level) < 1 or int(egg_level) > 5:
-        await ctx.send('"{}" is not valid. Egg levels should be 1-5'.format(egg_level))
+    if int(egg_level) < 1 or int(egg_level) > 6:
+        await ctx.send('"{}" is not valid. Egg levels should be 1-6'.format(egg_level))
         return
 
     if not until_hatch.isnumeric():
@@ -325,6 +327,9 @@ async def egg(ctx, egg_level, until_hatch, *args):
 
         if egg_level == '5':
             content = '{} {}'.format(legendary_role.mention, content)
+
+        if egg_level == '6' and mega_role is not None:
+            content = '{} {}'.format(mega_role.mention, content)
 
         await report_channel.send(content)
         await ctx.send('Egg reported to ' + report_channel.mention)
