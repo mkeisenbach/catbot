@@ -503,7 +503,7 @@ async def host(ctx, *args):
 
     if thumbnail == '' and \
             re.search('mega', parsed["boss"], re.IGNORECASE) is not None:
-        thumbnail == EGG_URL_BASE + 'mega_egg.png'
+        thumbnail = EGG_URL_BASE + 'mega_egg.png'
 
     embed = Embed(title=parsed["boss"].title(),
                   description='React with team emoji for invite')
