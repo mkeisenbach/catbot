@@ -25,6 +25,7 @@ gymfile = 'gyms.csv'
 legendaries = []
 pokemon = None
 pokemonfile = 'pokedex.csv'
+EGG_URL_BASE = 'https://ironcreek.net/catbot/eggs/'
 
 # =============================================================================
 # String constants
@@ -186,14 +187,13 @@ def censor_notes(notes):
 
 
 def get_egg_url(level):
-    URL_BASE = 'https://ironcreek.net/catbot/eggs/'
     if level <= 2:
         thumbnail = 'egg12.png'
     elif level <= 4:
         thumbnail = 'egg34.png'
     else:
         thumbnail = 'legendary_egg.png'
-    return URL_BASE+thumbnail
+    return EGG_URL_BASE+thumbnail
 
 
 # =============================================================================
@@ -501,6 +501,9 @@ async def host(ctx, *args):
     if thumbnail == '':
         thumbnail = pokemon.get_boss_url(parsed["boss"])
 
+    if thumbnail == '' and re.match('mega', parsed["boss"], re.IGNORECASE):
+        thumbnail == EGG_URL_BASE + 'mega_egg.png'
+        
     embed = Embed(title=parsed["boss"].title(),
                   description='React with team emoji for invite')
     embed.add_field(name="Host", value=ctx.author)
