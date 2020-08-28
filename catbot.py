@@ -501,9 +501,10 @@ async def host(ctx, *args):
     if thumbnail == '':
         thumbnail = pokemon.get_boss_url(parsed["boss"])
 
-    if thumbnail == '' and re.match('mega', parsed["boss"], re.IGNORECASE):
+    if thumbnail == '' and \
+            re.search('mega', parsed["boss"], re.IGNORECASE) is not None:
         thumbnail == EGG_URL_BASE + 'mega_egg.png'
-        
+
     embed = Embed(title=parsed["boss"].title(),
                   description='React with team emoji for invite')
     embed.add_field(name="Host", value=ctx.author)
