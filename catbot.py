@@ -466,9 +466,9 @@ async def purge_fc(ctx, limit=None):
 
 
 def get_reporting_channels(ctx):
-    reporting_channels = {'mega': 'active mega raids',
-                          'legendary': 'active T5 raids',
-                          'other': 'active T1-T3 raids'}
+    reporting_channels = {'mega': 'active-mega-raids',
+                          'legendary': 'active-t5-raids',
+                          'other': 'active-t1-t3-raids'}
 
     if ctx.guild is not None:
         for key, name in reporting_channels.items():
