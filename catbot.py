@@ -412,6 +412,13 @@ async def reload_gyms(ctx):
     await ctx.message.add_reaction('👍')
 
 
+@bot.command()
+@commands.has_any_role('Developer')
+async def reload_pokemon(ctx):
+    pokemon.read_csv(POKEMONFILE)
+    await ctx.message.add_reaction('👍')
+
+
 @bot.command(pass_context=True)
 async def get_invite(ctx):
     if ctx.message.guild is None:
