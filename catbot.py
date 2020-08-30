@@ -20,12 +20,17 @@ from gyms import Gyms
 from pokemon import Pokemon
 
 BOT_PREFIX = '!'
+GYMFILE = 'gyms.csv'
+POKEMONFILE = 'pokedex.csv'
+EGG_URL_BASE = 'https://ironcreek.net/catbot/eggs/'
+EGG1 = 'egg1.png'
+EGG3 = 'egg3.png'
+EGG_LEGENDARY = 'legendary_egg.png'
+EGG_MEGA = 'mega_egg.png'
+
 gyms = None
-gymfile = 'gyms.csv'
 legendaries = []
 pokemon = None
-pokemonfile = 'pokedex.csv'
-EGG_URL_BASE = 'https://ironcreek.net/catbot/eggs/'
 
 # =============================================================================
 # String constants
@@ -188,9 +193,9 @@ def censor_notes(notes):
 
 def get_egg_url(level):
     if level <= 2:
-        thumbnail = 'egg12.png'
+        thumbnail = 'egg1.png'
     elif level <= 4:
-        thumbnail = 'egg34.png'
+        thumbnail = 'egg3.png'
     else:
         thumbnail = 'legendary_egg.png'
     return EGG_URL_BASE+thumbnail
@@ -403,7 +408,7 @@ async def get_legendaries(ctx):
 @bot.command()
 @commands.has_any_role('Mods', 'Developer')
 async def reload_gyms(ctx):
-    gyms.read_csv(gymfile)
+    gyms.read_csv(GYMFILE)
     await ctx.message.add_reaction('👍')
 
 
@@ -460,19 +465,85 @@ async def purge_fc(ctx, limit=None):
                    delete_after=5)
 
 
+def get_reporting_channels(ctx):
+    reporting_channels = {'mega': 'active mega raids',
+                          'legendary': 'active T5 raids',
+                          'other': 'active T1-T3 raids'}
+
+    if ctx.guild is not None:
+        for key, name in reporting_channels.items():
+            reporting_channels[key] = utils.get(ctx.guild.channels, name=name)
+
+    return reporting_channels
+
+
+def is_mega(boss):
+    if re.search(r'mega(\s|$)', boss, re.IGNORECASE) is None:
+        return False
+    return True
+
+
+def is_legendary(boss):
+    if boss.lower() in legendaries:
+        return True
+    return False
+
+
+def get_thumbnail(boss):
+    thumbnail = ''
+
+    m = re.match('t([12345])', boss, re.IGNORECASE)
+    if m is not None:
+        thumbnail = get_egg_url(int(m.groups()[0]))
+        return thumbnail
+
+    thumbnail = pokemon.get_boss_url(boss)
+    if thumbnail != '':
+        return thumbnail
+
+    if is_mega(boss):
+        thumbnail = EGG_URL_BASE + EGG_MEGA
+
+    return thumbnail
+
+
+def create_embed(title, host, when, notes='', thumbnail=''):
+    embed = Embed(title.title(),
+                  description='React with team emoji for invite')
+    embed.add_field(name="Host", value=host)
+    embed.add_field(name="When", value=when)
+
+    if notes != '':
+        embed.add_field(name="Notes", value=notes)
+
+    if thumbnail != '':
+        embed.set_thumbnail(url=thumbnail)
+
+    return embed
+
+
+def get_raid_tier(boss):
+    if is_mega(boss):
+        return 'mega'
+
+    if is_legendary(boss) or boss.lower() == 't5':
+        return 'legendary'
+
+    return 'other'
+
+
 @bot.command()
 async def host(ctx, *args):
-    report_channel = None
-
     if ctx.guild is None:
         await ctx.send('This command can only be used on a server.')
         return
     else:
-        report_channel = utils.get(ctx.guild.channels, name='💥-hosting-raids')
+        reporting_channels = get_reporting_channels(ctx)
 
-    if report_channel is None:
-        await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
-        return
+    for key, channel in reporting_channels.items():
+        if channel is None:
+            await ctx.send('Reporting channels not found')
+            return
 
     parsed = parse_host_args(args)
     if not parsed:
@@ -491,40 +562,24 @@ async def host(ctx, *args):
     if parsed["notes"] != '':
         parsed["notes"] = censor_notes(parsed["notes"])
 
-    thumbnail = ''
+    thumbnail = get_thumbnail(parsed['boss'])
 
-    if parsed["verb"] == 'hatch':
-        m = re.match('t([12345])', parsed["boss"], re.IGNORECASE)
-        if m is not None:
-            thumbnail = get_egg_url(int(m.groups()[0]))
+    embed = create_embed(parsed['boss'], ctx.author, when,
+                         parsed['notes'], thumbnail)
 
-    if thumbnail == '':
-        thumbnail = pokemon.get_boss_url(parsed["boss"])
+    raid_tier = get_raid_tier(parsed['boss'])
 
-    if thumbnail == '' and \
-            re.search('mega', parsed["boss"], re.IGNORECASE) is not None:
-        thumbnail = EGG_URL_BASE + 'mega_egg.png'
-
-    embed = Embed(title=parsed["boss"].title(),
-                  description='React with team emoji for invite')
-    embed.add_field(name="Host", value=ctx.author)
-    embed.add_field(name="When", value=when)
-
-    if parsed["notes"] != '':
-        embed.add_field(name="Notes", value=parsed["notes"])
-
-    if thumbnail != '':
-        embed.set_thumbnail(url=thumbnail)
-
-    msg = await report_channel.send(embed=embed, delete_after=7200)
-
-    await ctx.send('Raid reported to ' + report_channel.mention,
-                   delete_after=5)
+    tier = get_raid_tier(parsed['boss'])
+    
+    msg = await reporting_channels[tier].send(embed=embed, delete_after=7200)
 
     for team_logo in ['m7instinctlogo', 'm7mysticlogo', 'm7valorlogo']:
         emoji = utils.get(ctx.guild.emojis, name=team_logo)
         if emoji is not None:
             await msg.add_reaction(emoji)
+
+    await ctx.send('Raid reported to ' + reporting_channels[tier].mention,
+                   delete_after=5)
 
     await ctx.message.delete()
 
@@ -569,17 +624,17 @@ async def show_embed(ctx, *args):
 # =============================================================================
 
 try:
-    gyms = Gyms(gymfile)
+    gyms = Gyms(GYMFILE)
     print('Gyms loaded')
 except IOError:
-    print('ERROR: Unable to load gyms from', gymfile)
+    print('ERROR: Unable to load gyms from', GYMFILE)
     sys.exit()
 
 try:
-    pokemon = Pokemon(pokemonfile)
+    pokemon = Pokemon(POKEMONFILE)
     print('Pokemon loaded')
 except IOError:
-    print('ERROR: Unable to load pokemon from', gymfile)
+    print('ERROR: Unable to load pokemon from', GYMFILE)
     sys.exit()
 
 if __name__ == "__main__":

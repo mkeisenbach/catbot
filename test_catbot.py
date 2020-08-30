@@ -10,6 +10,9 @@ import catbot as cb
 
 
 class CatbotTests(unittest.TestCase):
+    def setUp(self):
+        cb.legendaries = ['heatran']
+
     def test_parse_host_args_pos(self):
         test_strings = [
             'genesect starting in 15 team valor preferred',
@@ -64,6 +67,36 @@ class CatbotTests(unittest.TestCase):
         for args in test_strings:
             self.assertTrue(cb.parse_host_mins_left(args.split()),
                             'FAILED ON: ' + args)
+
+    def test_get_thumbnail(self):
+        self.assertEqual(cb.get_thumbnail('T5'),
+                         cb.EGG_URL_BASE + cb.EGG_LEGENDARY)
+        self.assertEqual(cb.get_thumbnail('T4'),
+                         cb.EGG_URL_BASE + cb.EGG3)
+        self.assertEqual(cb.get_thumbnail('T3'),
+                         cb.EGG_URL_BASE + cb.EGG3)
+        self.assertEqual(cb.get_thumbnail('T2'),
+                         cb.EGG_URL_BASE + cb.EGG1)
+        self.assertEqual(cb.get_thumbnail('T1'),
+                         cb.EGG_URL_BASE + cb.EGG1)
+
+        self.assertNotEqual(cb.get_thumbnail('heatran'), '')
+
+        self.assertNotEqual(cb.get_thumbnail('Mega Charizard X'), '')
+
+        self.assertNotEqual(cb.get_thumbnail('Mega'), '')
+
+    def test_get_raid_tier(self):
+        self.assertEqual(cb.get_raid_tier('mega'), 'mega')
+        self.assertEqual(cb.get_raid_tier('Mega Venusaur'), 'mega')
+        self.assertEqual(cb.get_raid_tier('Meganium'), 'other')
+
+        self.assertEqual(cb.get_raid_tier('t5'), 'legendary')
+        self.assertEqual(cb.get_raid_tier('heatran'), 'legendary')
+        self.assertEqual(cb.get_raid_tier('golem'), 'other')
+
+        self.assertEqual(cb.get_raid_tier('T3'), 'other')
+        self.assertEqual(cb.get_raid_tier('t1'), 'other')
 
 
 if __name__ == '__main__':
