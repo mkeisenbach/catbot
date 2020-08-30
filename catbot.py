@@ -533,6 +533,75 @@ def get_raid_tier(boss):
 
 
 @bot.command()
+async def host(ctx, *args):
+    report_channel = None
+
+    if ctx.guild is None:
+        await ctx.send('This command can only be used on a server.')
+        return
+    else:
+        report_channel = utils.get(ctx.guild.channels, name='💥-hosting-raids')
+
+    if report_channel is None:
+        await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
+        return
+
+    parsed = parse_host_args(args)
+    if not parsed:
+        parsed = parse_host_now(args)
+    if not parsed:
+        parsed = parse_host_mins_left(args)
+
+    if not parsed:
+        content = \
+        'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)\nExample: !host heatran ends in 30 mins'
+        await ctx.send(content)
+        return
+
+    when = '{}ing in {} mins'.format(parsed["verb"], parsed["mins"])
+
+    if parsed["notes"] != '':
+        parsed["notes"] = censor_notes(parsed["notes"])
+
+    thumbnail = ''
+
+    if parsed["verb"] == 'hatch':
+        m = re.match('t([12345])', parsed["boss"], re.IGNORECASE)
+        if m is not None:
+            thumbnail = get_egg_url(int(m.groups()[0]))
+
+    if thumbnail == '':
+        thumbnail = pokemon.get_boss_url(parsed["boss"])
+
+    if thumbnail == '' and \
+            re.search('mega', parsed["boss"], re.IGNORECASE) is not None:
+        thumbnail = EGG_URL_BASE + 'mega_egg.png'
+
+    embed = Embed(title=parsed["boss"].title(),
+                  description='React with team emoji for invite')
+    embed.add_field(name="Host", value=ctx.author)
+    embed.add_field(name="When", value=when)
+
+    if parsed["notes"] != '':
+        embed.add_field(name="Notes", value=parsed["notes"])
+
+    if thumbnail != '':
+        embed.set_thumbnail(url=thumbnail)
+
+    msg = await report_channel.send(embed=embed, delete_after=7200)
+
+    await ctx.send('Raid reported to ' + report_channel.mention,
+                   delete_after=5)
+
+    for team_logo in ['m7instinctlogo', 'm7mysticlogo', 'm7valorlogo']:
+        emoji = utils.get(ctx.guild.emojis, name=team_logo)
+        if emoji is not None:
+            await msg.add_reaction(emoji)
+
+    await ctx.message.delete()
+
+
+@bot.command()
 async def test_host(ctx, *args):
     if ctx.guild is None:
         await ctx.send('This command can only be used on a server.')
@@ -567,10 +636,8 @@ async def test_host(ctx, *args):
     embed = create_embed(parsed['boss'], ctx.author, when,
                          parsed['notes'], thumbnail)
 
-    raid_tier = get_raid_tier(parsed['boss'])
-
     tier = get_raid_tier(parsed['boss'])
-    
+
     msg = await reporting_channels[tier].send(embed=embed, delete_after=7200)
 
     for team_logo in ['m7instinctlogo', 'm7mysticlogo', 'm7valorlogo']:
