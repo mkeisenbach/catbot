@@ -81,9 +81,7 @@ class CatbotTests(unittest.TestCase):
                          cb.EGG_URL_BASE + cb.EGG1)
 
         self.assertNotEqual(cb.get_thumbnail('heatran'), '')
-
         self.assertNotEqual(cb.get_thumbnail('Mega Charizard X'), '')
-
         self.assertNotEqual(cb.get_thumbnail('Mega'), '')
 
     def test_get_raid_tier(self):

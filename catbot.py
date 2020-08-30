@@ -584,41 +584,6 @@ async def host(ctx, *args):
     await ctx.message.delete()
 
 
-@bot.command()
-async def show_embed(ctx, *args):
-    args = parse_host_args(args)
-
-    if len(args) == 0:
-        content = \
-        'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)'
-        await ctx.send(content)
-        return
-
-    boss = args[0]
-    verb = args[1]
-    mins = args[2]
-    notes = args[-1]
-
-    embed = Embed(title=boss.title(),
-                  description='React with team emoji for invite')
-    embed.add_field(name="Host", value=ctx.author)
-    embed.add_field(name="When", value='{}ing in {} mins'.format(verb, mins))
-    embed.add_field(name="Notes", value=notes)
-
-    msg = await ctx.send(embed=embed)
-
-    instinct_emoji = utils.get(ctx.guild.emojis, name='m7instinctlogo')
-    mystic_emoji = utils.get(ctx.guild.emojis, name='m7mysticlogo')
-    valor_emoji = utils.get(ctx.guild.emojis, name='m7valorlogo')
-
-    if instinct_emoji is not None:
-        await msg.add_reaction(instinct_emoji)
-    if mystic_emoji is not None:
-        await msg.add_reaction(mystic_emoji)
-    if valor_emoji is not None:
-        await msg.add_reaction(valor_emoji)
-
-
 # =============================================================================
 # Main
 # =============================================================================
