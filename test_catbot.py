@@ -96,6 +96,14 @@ class CatbotTests(unittest.TestCase):
         self.assertEqual(cb.get_raid_tier('T3'), 'other')
         self.assertEqual(cb.get_raid_tier('t1'), 'other')
 
+    def test_create_embed(self):
+        self.assertNotEqual(cb.create_embed('title', 'host', 'when', '', ''),
+                            None)
+        self.assertNotEqual(cb.create_embed('title', 'host', 'when', 'notes',
+                                            ''), None)
+        self.assertNotEqual(cb.create_embed('title', 'host', 'when', 'notes',
+                                            'thumbnail'), None)
+
 
 if __name__ == '__main__':
     unittest.main()
