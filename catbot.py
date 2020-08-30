@@ -455,7 +455,8 @@ async def purge_fc(ctx, limit=None):
             return False
         if msg.id == ctx.message.id:
             return True
-        if re.search(r'(^|\D)\d{4}[-\s]*\d{4}[-\s]*\d{4}($|\D)', msg.content) is None:
+        if re.search(r'(^|\D)\d{4}[-\s]*\d{4}[-\s]*\d{4}($|\D)', msg.content)\
+                is None:
             return False
         return True
 
@@ -473,12 +474,14 @@ async def purge_fc(ctx, limit=None):
 
 
 def get_reporting_channels(ctx):
-    reporting_channels = {'mega': 'active-mega-raids',
-                          'legendary': 'active-t5-raids',
-                          'other': 'active-t1-t3-raids'}
+    channel_names = {'mega': 'active-mega-raids',
+                     'legendary': 'active-t5-raids',
+                     'other': 'active-t1-t3-raids'}
+
+    reporting_channels = {}
 
     if ctx.guild is not None:
-        for key, name in reporting_channels.items():
+        for key, name in channel_names.items():
             reporting_channels[key] = utils.get(ctx.guild.channels, name=name)
 
     return reporting_channels
