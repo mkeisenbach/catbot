@@ -650,7 +650,7 @@ async def test_host(ctx, *args):
 
     msg = await reporting_channels[tier].send(embed=embed, delete_after=7200)
 
-    for team_logo in ['m7instinctlogo', 'm7mysticlogo', 'm7valorlogo']:
+    for team_logo in ['instinctlogo', 'mysticlogo', 'valorlogo']:
         emoji = utils.get(ctx.guild.emojis, name=team_logo)
         if emoji is not None:
             await msg.add_reaction(emoji)
