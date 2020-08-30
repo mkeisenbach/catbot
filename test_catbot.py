@@ -92,6 +92,7 @@ class CatbotTests(unittest.TestCase):
         self.assertEqual(cb.get_raid_tier('t5'), 'legendary')
         self.assertEqual(cb.get_raid_tier('heatran'), 'legendary')
         self.assertEqual(cb.get_raid_tier('golem'), 'other')
+        self.assertEqual(cb.get_raid_tier('T5 heatran'), 'legendary')
 
         self.assertEqual(cb.get_raid_tier('T3'), 'other')
         self.assertEqual(cb.get_raid_tier('t1'), 'other')

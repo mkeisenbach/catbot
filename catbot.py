@@ -536,14 +536,15 @@ def get_raid_tier(boss):
     if is_mega(boss):
         return 'mega'
 
-    if is_legendary(boss) or boss.lower() == 't5':
+    if is_legendary(boss) or\
+            re.match('t5', boss, re.IGNORECASE) is not None:
         return 'legendary'
 
     return 'other'
 
 
 @bot.command()
-async def host(ctx, *args):
+async def old_host(ctx, *args):
     report_channel = None
 
     if ctx.guild is None:
@@ -612,7 +613,7 @@ async def host(ctx, *args):
 
 
 @bot.command()
-async def test_host(ctx, *args):
+async def host(ctx, *args):
     if ctx.guild is None:
         await ctx.send('This command can only be used on a server.')
         return
