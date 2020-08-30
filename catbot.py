@@ -533,7 +533,7 @@ def get_raid_tier(boss):
 
 
 @bot.command()
-async def host(ctx, *args):
+async def test_host(ctx, *args):
     if ctx.guild is None:
         await ctx.send('This command can only be used on a server.')
         return
