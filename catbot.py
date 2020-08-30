@@ -387,7 +387,7 @@ async def raid(ctx, boss, time_left, *args):
 
 
 @bot.command()
-@commands.has_any_role('Developer')
+@commands.has_any_role('Developer', 'Admin')
 async def set_legendaries(ctx, *args):
     global legendaries
     if len(args) > 0:
@@ -396,7 +396,7 @@ async def set_legendaries(ctx, *args):
 
 
 @bot.command()
-@commands.has_any_role('Developer')
+@commands.has_any_role('Developer', 'Admin')
 async def get_legendaries(ctx):
     global legendaries
     msg = ', '.join([el.title() for el in legendaries])
@@ -406,7 +406,7 @@ async def get_legendaries(ctx):
 
 
 @bot.command()
-@commands.has_any_role('Mods', 'Developer')
+@commands.has_any_role('Developer')
 async def reload_gyms(ctx):
     gyms.read_csv(GYMFILE)
     await ctx.message.add_reaction('👍')
