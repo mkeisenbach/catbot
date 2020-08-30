@@ -508,7 +508,7 @@ def get_thumbnail(boss):
 
 
 def create_embed(title, host, when, notes='', thumbnail=''):
-    embed = Embed(title.title(),
+    embed = Embed(title=title.title(),
                   description='React with team emoji for invite')
     embed.add_field(name="Host", value=host)
     embed.add_field(name="When", value=when)
