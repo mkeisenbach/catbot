@@ -672,7 +672,7 @@ def is_old_msg(created_at, max_mins):
     return False
 
 
-@commands()
+@bot.command()
 async def purge_old(ctx, max_mins=2*60):
     async for message in ctx.channel.history(limit=100):
         if is_old_msg(message.created_at, max_mins):
