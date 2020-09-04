@@ -668,23 +668,18 @@ async def host(ctx, *args):
     await ctx.message.delete()
 
 
-def is_old_msg(created_at, max_mins):
-    if created_at < \
-            dt.datetime.now(dt.timezone.utc) - dt.timedelta(minutes=max_mins):
-        return True
-
-    return False
+def is_n_minutes_old(timestamp, minutes):
+    return (dt.datetime.utcnow() - timestamp) > dt.timedelta(minutes=minutes)
 
 
 @commands.has_any_role('TR Scientist')
 @bot.command()
-async def purge_old(ctx, max_mins=2*60):
-    msgs = []
-    async for message in ctx.channel.history(limit=100):
-        if is_old_msg(message.created_at, max_mins):
-            print(message)
-            msgs.append(message)
-
+async def purge_old_messages(ctx, age_in_minutes=2*60):
+    deleted = await ctx.channel.purge(limit=100,
+                                      check=lambda m: is_n_minutes_old(m.created_at,
+                                                                       age_in_minutes))
+    await ctx.send('Deleted {} message(s)'.format(len(deleted)),
+                   delete_after=10)
     await ctx.message.delete()
 
 
