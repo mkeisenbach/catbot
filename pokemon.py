@@ -23,9 +23,7 @@ class Pokemon:
         URL_BASE = 'https://ironcreek.net/catbot/pokemon/'
         filename = ''
 
-        found = self.find(boss)
-        if found != '':
-            filename = self.pokedex[found]
+        filename = self.pokedex.get(boss.lower(), '')
 
         if filename != '':
             return URL_BASE + filename + '.png'

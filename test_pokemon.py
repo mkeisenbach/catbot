@@ -18,9 +18,6 @@ class PokemonTests(unittest.TestCase):
         self.assertGreater(len(self.pokemon.get_boss_url('golem')), 0)
         self.assertGreater(len(self.pokemon.get_boss_url('alolan raichu')), 0)
 
-    def test_get_boss_url_fuzzy(self):
-        self.assertGreater(len(self.pokemon.get_boss_url('wheezing')), 0)
-
     def test_get_boss_url_nonexisting(self):
         self.assertEqual(len(self.pokemon.get_boss_url('afsdf')), 0)
 
@@ -36,6 +33,7 @@ class PokemonTests(unittest.TestCase):
         self.assertEqual(self.pokemon.find('venasaur'), 'venusaur')
         self.assertEqual(self.pokemon.find('venusar'), 'venusaur')
         self.assertEqual(self.pokemon.find('veenusaur'), 'venusaur')
+        self.assertEqual(self.pokemon.find('heatrn'), 'heatran')
 
         self.assertEqual(self.pokemon.find('mega charizard x'),
                          'mega charizard x')

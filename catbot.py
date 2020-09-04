@@ -644,6 +644,10 @@ async def host(ctx, *args):
     if parsed["notes"] != '':
         parsed["notes"] = censor_notes(parsed["notes"])
 
+    found = pokemon.find(parsed["boss"])
+    if found != '':
+        parsed["boss"] = found
+
     thumbnail = get_thumbnail(parsed['boss'])
 
     embed = create_embed(parsed['boss'], ctx.author, when,
