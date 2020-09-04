@@ -16,6 +16,8 @@ from discord import utils
 from discord import Embed
 from discord.ext import commands
 from dateutil.parser import parse
+from datetime import datetime
+from datetime import timedelta
 from gyms import Gyms
 from pokemon import Pokemon
 
@@ -649,7 +651,8 @@ async def host(ctx, *args):
 
     tier = get_raid_tier(parsed['boss'])
 
-    msg = await reporting_channels[tier].send(embed=embed, delete_after=7200)
+    msg = await reporting_channels[tier].send(embed=embed,
+                                              delete_after=2*60*60)
 
     for team_logo in ['instinctlogo', 'mysticlogo', 'valorlogo']:
         emoji = utils.get(ctx.guild.emojis, name=team_logo)
@@ -659,6 +662,21 @@ async def host(ctx, *args):
     await ctx.send('Raid reported to ' + reporting_channels[tier].mention,
                    delete_after=5)
 
+    await ctx.message.delete()
+
+
+def is_old_msg(created_at, max_mins):
+    if created_at < datetime.now() - timedelta(minutes=max_mins):
+        return True
+
+    return False
+
+
+@commands()
+async def purge_old(ctx, max_mins=2*60):
+    async for message in ctx.channel.history(limit=100):
+        if is_old_msg(message.created_at, max_mins):
+            message.delete()
     await ctx.message.delete()
 
 
