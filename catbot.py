@@ -679,9 +679,12 @@ def is_old_msg(created_at, max_mins):
 @commands.has_any_role('TR Scientist')
 @bot.command()
 async def purge_old(ctx, max_mins=2*60):
+    msgs = []
     async for message in ctx.channel.history(limit=100):
         if is_old_msg(message.created_at, max_mins):
-            await message.delete()
+            msgs.append(message)
+
+    await ctx.message.channel.delete_messages(msgs)
     await ctx.message.delete()
 
 
