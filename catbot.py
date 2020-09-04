@@ -672,7 +672,7 @@ def is_n_minutes_old(timestamp, minutes):
     return (dt.datetime.utcnow() - timestamp) > dt.timedelta(minutes=minutes)
 
 
-@commands.has_any_role('TR Scientist', 'mod')
+@commands.has_any_role('TR Scientist', 'mod', 'Mod')
 @bot.command()
 async def purge_old_messages(ctx, age_in_minutes=2*60):
     deleted = await ctx.channel.purge(limit=100,
