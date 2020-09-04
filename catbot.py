@@ -16,7 +16,6 @@ from discord import utils
 from discord import Embed
 from discord.ext import commands
 from dateutil.parser import parse
-from datetime import datetime
 from datetime import timedelta
 from gyms import Gyms
 from pokemon import Pokemon
@@ -670,7 +669,8 @@ async def host(ctx, *args):
 
 
 def is_old_msg(created_at, max_mins):
-    if created_at < datetime.now() - timedelta(minutes=max_mins):
+    if created_at < \
+            dt.datetime.now(dt.timezone.utc) - dt.timedelta(minutes=max_mins):
         return True
 
     return False
@@ -682,9 +682,9 @@ async def purge_old(ctx, max_mins=2*60):
     msgs = []
     async for message in ctx.channel.history(limit=100):
         if is_old_msg(message.created_at, max_mins):
+            print(message)
             msgs.append(message)
 
-    await ctx.message.channel.delete_messages(msgs)
     await ctx.message.delete()
 
 
