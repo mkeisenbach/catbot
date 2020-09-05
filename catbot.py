@@ -10,20 +10,20 @@ Catbot 2.0 uses discord.py version 1.x
 import sys
 import os
 import re
-import asyncio
 import datetime as dt
 import dotenv
+import pickle
 from discord import utils
 from discord import Embed
 from discord.ext import commands
 from dateutil.parser import parse
-from datetime import timedelta
 from gyms import Gyms
 from pokemon import Pokemon
 
 BOT_PREFIX = '!'
 GYMFILE = 'gyms.csv'
 POKEMONFILE = 'pokedex.csv'
+PARAMSFILE = 'params.pickle'
 EGG_URL_BASE = 'https://ironcreek.net/catbot/eggs/'
 EGG1 = 'egg1.png'
 EGG3 = 'egg3.png'
@@ -31,8 +31,8 @@ EGG_LEGENDARY = 'legendary_egg.png'
 EGG_MEGA = 'mega_egg.png'
 
 gyms = None
-legendaries = []
 pokemon = None
+params = {}
 
 # =============================================================================
 # String constants
@@ -202,6 +202,16 @@ def get_egg_url(level):
         thumbnail = 'legendary_egg.png'
     return EGG_URL_BASE+thumbnail
 
+
+def save_params(paramsfile, params):
+    with open(paramsfile, 'wb') as f:
+        pickle.dump(params, f)
+
+
+def load_params(paramsfile):
+    with open(paramsfile, 'rb') as f:
+        params = pickle.load(f)
+    return params
 
 # =============================================================================
 # Test functions
@@ -379,7 +389,7 @@ async def raid(ctx, boss, time_left, *args):
         reporter = ctx.message.author.mention
         content = generate_post(False, boss, time_left, found[0], reporter)
 
-        if boss in legendaries:
+        if boss in params['legendaries']:
             content = '{} {}'.format(legendary_role.mention, content)
 
         await report_channel.send(content)
@@ -391,16 +401,17 @@ async def raid(ctx, boss, time_left, *args):
 @bot.command()
 @commands.has_any_role('Developer', 'Admin')
 async def set_legendaries(ctx, *args):
-    global legendaries
     if len(args) > 0:
-        legendaries = list(map(str.lower, args))
+        params['legendaries'] = list(map(str.lower, args))
     await ctx.message.add_reaction('👍')
+
+    save_params(PARAMSFILE, params)
 
 
 @bot.command()
 @commands.has_any_role('Developer', 'Admin')
 async def get_legendaries(ctx):
-    global legendaries
+    legendaries = params.get('legendaries', [])
     msg = ', '.join([el.title() for el in legendaries])
     if msg == '':
         msg = 'No legendaries set.'
@@ -496,7 +507,7 @@ def is_mega(boss):
 
 
 def is_legendary(boss):
-    if boss.lower() in legendaries:
+    if boss.lower() in params['legendaries']:
         return True
     return False
 
@@ -632,6 +643,14 @@ try:
 except IOError:
     print('ERROR: Unable to load pokemon from', GYMFILE)
     sys.exit()
+
+try:
+    params = load_params(PARAMSFILE)
+    print('Parameters loaded')
+    if 'legendaries' not in params:
+        print('WARNING: Legendaries not set')
+except IOError:
+    pass
 
 if __name__ == "__main__":
     dotenv.load_dotenv()

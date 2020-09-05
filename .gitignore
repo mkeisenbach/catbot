@@ -7,3 +7,4 @@ discord_key.sh
 .pylint.d
 .spyproject
 .env
+params.pickle
