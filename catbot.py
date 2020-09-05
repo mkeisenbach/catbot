@@ -12,6 +12,7 @@ import os
 import re
 import asyncio
 import datetime as dt
+import dotenv
 from discord import utils
 from discord import Embed
 from discord.ext import commands
@@ -702,7 +703,8 @@ except IOError:
     sys.exit()
 
 if __name__ == "__main__":
-    key = os.getenv('DiscordKey')
+    dotenv.load_dotenv()
+    key = os.getenv('DISCORD_TOKEN')
     if key is None:
         print('ERROR: Discord Key not found in the environment variables')
         sys.exit()
