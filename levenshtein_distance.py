@@ -5,20 +5,9 @@ Created on Tue Sep  1 14:54:14 2020
 @author: Mei
 """
 
+from functools import lru_cache
 
-def memoize(func):
-    mem = {}
-
-    def memoizer(*args, **kwargs):
-        key = str(args) + str(kwargs)
-        if key not in mem:
-            mem[key] = func(*args, **kwargs)
-        return mem[key]
-
-    return memoizer
-
-
-@memoize
+@lru_cache(maxsize=768)
 def levenshtein(s, t):
     if s == "":
         return len(t)
