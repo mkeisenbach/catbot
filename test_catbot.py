@@ -105,6 +105,17 @@ class CatbotTests(unittest.TestCase):
         self.assertNotEqual(cb.create_embed('title', 'host', 'when', 'notes',
                                             'thumbnail'), None)
 
+    def test_censor_notes(self):
+        self.assertEqual(cb.censor_notes('prefer instinct'), 'prefer instinct')
+        self.assertEqual(cb.censor_notes('dm'), '...')
+        self.assertEqual(cb.censor_notes('dm for code'), '...for code')
+        self.assertEqual(cb.censor_notes('DM'), '...')
+        self.assertEqual(cb.censor_notes('dm me'), '...')
+        self.assertEqual(cb.censor_notes('direct message'), '...')
+        self.assertEqual(cb.censor_notes('direct msg'), '...')
+        self.assertEqual(cb.censor_notes('direct message me'), '...')
+        self.assertEqual(cb.censor_notes('direct message for code'),
+                         '...for code')
 
 if __name__ == '__main__':
     unittest.main()
