@@ -26,10 +26,9 @@ class LevenshteinTests(unittest.TestCase):
         self.assertEquals(levenshtein("b", "bbb"), 2)
         self.assertEquals(levenshtein("Hello World", "Hello"), 6)
 
-# TODO(andre): Check if case-insensitive comparisons should work or not
-#    def test_equal_strings_case_insensitive(self):
-#       self.assertEquals(levenshtein("a", "A"), 0)
-#       self.assertEquals(levenshtein("Hello", "hElLo"), 0)
+    def test_equal_strings_case_sensitive(self):
+       self.assertEquals(levenshtein("a", "A"), 1)
+       self.assertEquals(levenshtein("Hello", "hElLo"), 3)
 
 if __name__ == '__main__':
     unittest.main()
