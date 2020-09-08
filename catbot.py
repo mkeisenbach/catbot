@@ -33,6 +33,7 @@ EGG_MEGA = 'mega_egg.png'
 gyms = None
 pokemon = None
 params = {}
+params['legendaries'] = []
 
 # =============================================================================
 # String constants
@@ -393,7 +394,7 @@ async def raid(ctx, boss, time_left, *args):
         reporter = ctx.message.author.mention
         content = generate_post(False, boss, time_left, found[0], reporter)
 
-        if boss in params['legendaries']:
+        if is_legendary(boss):
             content = '{} {}'.format(legendary_role.mention, content)
 
         await report_channel.send(content)
@@ -511,7 +512,7 @@ def is_mega(boss):
 
 
 def is_legendary(boss):
-    if boss.lower() in params['legendaries']:
+    if 'legendaries' in params and boss.lower() in params['legendaries']:
         return True
     return False
 
