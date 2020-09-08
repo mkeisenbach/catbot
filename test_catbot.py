@@ -11,7 +11,7 @@ import catbot as cb
 
 class CatbotTests(unittest.TestCase):
     def setUp(self):
-        cb.legendaries = ['heatran']
+        cb.params['legendaries'] = ['heatran']
 
     def test_parse_host_args_pos(self):
         test_strings = [
