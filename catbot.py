@@ -34,6 +34,7 @@ gyms = None
 pokemon = None
 params = {}
 params['legendaries'] = []
+logfile = None
 
 # =============================================================================
 # String constants
@@ -584,6 +585,10 @@ async def host(ctx, *args):
         content = \
         'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)\nExample: !host heatran ends in 30 mins'
         await ctx.send(content)
+
+        if logfile is not None:
+            logfile.write('Parse Error: {} host {}\n'.format(dt.datetime.now(),
+                                                 ' '.join(args)))
         return
 
     when = '{}ing in {} mins'.format(parsed["verb"], parsed["mins"])
@@ -631,6 +636,13 @@ async def purge_old_messages(ctx, age_in_minutes=2*60):
     await ctx.message.delete()
 
 
+@commands.has_any_role('TR Scientist', 'Developer')
+@bot.command()
+async def shutdown(ctx):
+    logfile.close()
+    await bot.logout()
+
+
 # =============================================================================
 # Main
 # =============================================================================
@@ -654,6 +666,12 @@ try:
     print('Parameters loaded')
     if 'legendaries' not in params:
         print('WARNING: Legendaries not set')
+except IOError:
+    pass
+
+try:
+    logfile = open('logfile.txt', 'a')
+    print('Logfile loaded')
 except IOError:
     pass
 
