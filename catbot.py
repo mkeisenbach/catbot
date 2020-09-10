@@ -194,7 +194,8 @@ def censor_notes(notes):
     dm_me_pat = re.compile(r'dm(\s+|$)(me)?', re.IGNORECASE)
     notes = dm_me_pat.sub('...', notes)
 
-    dm_me_pat2 = re.compile(r'direct\s*me?ss?a?ge?(\s+|$)(me)?', re.IGNORECASE)
+    dm_me_pat2 = re.compile(r'(direct\s*)?me?ss?a?ge?(\s*|$)(me)?',
+                            re.IGNORECASE)
     notes = dm_me_pat2.sub('...', notes)
 
     return notes
