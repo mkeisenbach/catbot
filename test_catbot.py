@@ -116,6 +116,10 @@ class CatbotTests(unittest.TestCase):
         self.assertEqual(cb.censor_notes('direct message me'), '...')
         self.assertEqual(cb.censor_notes('direct message for code'),
                          '...for code')
+        self.assertEqual(cb.censor_notes('message me for code'),
+                         '... for code')
+        self.assertEqual(cb.censor_notes('message for code'),
+                         '...for code')
 
 if __name__ == '__main__':
     unittest.main()
