@@ -597,7 +597,7 @@ async def host(ctx, *args):
         parsed["notes"] = censor_notes(parsed["notes"])
 
     found = pokemon.find(parsed["boss"])
-    if found != '' and found != parsed["boss"]:
+    if found != '' and found != parsed["boss"].lower():
         CatbotLog.write('Correction', '{} to {}'.format(parsed["boss"], found),
                         ctx.guild)
         parsed["boss"] = found
