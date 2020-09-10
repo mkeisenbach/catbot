@@ -19,11 +19,13 @@ from discord.ext import commands
 from dateutil.parser import parse
 from gyms import Gyms
 from pokemon import Pokemon
+from catbot_log import CatbotLog
 
 BOT_PREFIX = '!'
 GYMFILE = 'gyms.csv'
 POKEMONFILE = 'pokedex.csv'
 PARAMSFILE = 'params.pickle'
+LOGFILE = 'log.txt'
 EGG_URL_BASE = 'https://ironcreek.net/catbot/eggs/'
 EGG1 = 'egg1.png'
 EGG3 = 'egg3.png'
@@ -34,7 +36,6 @@ gyms = None
 pokemon = None
 params = {}
 params['legendaries'] = []
-logfile = None
 
 # =============================================================================
 # String constants
@@ -565,6 +566,7 @@ def get_raid_tier(boss):
 @bot.command()
 async def host(ctx, *args):
     if ctx.guild is None:
+        CatbotLog.write(ctx.message.created_at, 'Error: Command sent from DM')
         await ctx.send('This command can only be used on a server.')
         return
     else:
@@ -586,9 +588,7 @@ async def host(ctx, *args):
         'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)\nExample: !host heatran ends in 30 mins'
         await ctx.send(content)
 
-        if logfile is not None:
-            logfile.write('Parse Error: {} host {}\n'.format(dt.datetime.now(),
-                                                 ' '.join(args)))
+        CatbotLog.write('Parse Error', 'host ' + ' '.join(args))
         return
 
     when = '{}ing in {} mins'.format(parsed["verb"], parsed["mins"])
@@ -597,7 +597,8 @@ async def host(ctx, *args):
         parsed["notes"] = censor_notes(parsed["notes"])
 
     found = pokemon.find(parsed["boss"])
-    if found != '':
+    if found != '' and found != parsed["boss"]:
+        CatbotLog.write('Correction', '{} to {}'.format(parsed["boss"], found))
         parsed["boss"] = found
 
     thumbnail = get_thumbnail(parsed['boss'])
@@ -609,6 +610,8 @@ async def host(ctx, *args):
 
     msg = await reporting_channels[tier].send(embed=embed,
                                               delete_after=2*60*60)
+
+    CatbotLog.write('Success', 'host ' + ' '.join(args))
 
     for team_logo in ['instinctlogo', 'mysticlogo', 'valorlogo']:
         emoji = utils.get(ctx.guild.emojis, name=team_logo)
@@ -639,7 +642,6 @@ async def purge_old_messages(ctx, age_in_minutes=2*60):
 @commands.has_any_role('TR Scientist', 'Developer')
 @bot.command()
 async def shutdown(ctx):
-    logfile.close()
     await bot.logout()
 
 
@@ -669,11 +671,7 @@ try:
 except IOError:
     pass
 
-try:
-    logfile = open('logfile.txt', 'a')
-    print('Logfile loaded')
-except IOError:
-    pass
+CatbotLog.init(LOGFILE)
 
 if __name__ == "__main__":
     dotenv.load_dotenv()

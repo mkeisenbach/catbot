@@ -8,3 +8,4 @@ discord_key.sh
 .spyproject
 .env
 params.pickle
+log.txt
