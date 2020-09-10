@@ -16,8 +16,8 @@ class CatbotLog():
         CatbotLog.logfile = logfile
 
     @staticmethod
-    def write(tag, msg):
+    def write(tag, msg, server=''):
         assert CatbotLog.logfile is not None
         log = open(CatbotLog.logfile, 'a')
-        log.write('{} {}: {}\n'.format(datetime.now(), tag, msg))
+        log.write('{},{},{},{}\n'.format(datetime.now(), server, tag, msg))
         log.close()

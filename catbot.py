@@ -598,7 +598,8 @@ async def host(ctx, *args):
 
     found = pokemon.find(parsed["boss"])
     if found != '' and found != parsed["boss"]:
-        CatbotLog.write('Correction', '{} to {}'.format(parsed["boss"], found))
+        CatbotLog.write('Correction', '{} to {}'.format(parsed["boss"], found),
+                        ctx.guild)
         parsed["boss"] = found
 
     thumbnail = get_thumbnail(parsed['boss'])
@@ -611,7 +612,7 @@ async def host(ctx, *args):
     msg = await reporting_channels[tier].send(embed=embed,
                                               delete_after=2*60*60)
 
-    CatbotLog.write('Success', 'host ' + ' '.join(args))
+    CatbotLog.write('Success', 'host ' + ' '.join(args), ctx.guild)
 
     for team_logo in ['instinctlogo', 'mysticlogo', 'valorlogo']:
         emoji = utils.get(ctx.guild.emojis, name=team_logo)
