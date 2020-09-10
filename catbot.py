@@ -566,7 +566,7 @@ def get_raid_tier(boss):
 @bot.command()
 async def host(ctx, *args):
     if ctx.guild is None:
-        CatbotLog.write(ctx.message.created_at, 'Error: Command sent from DM')
+        CatbotLog.write('Error', 'Host command sent via DM')
         await ctx.send('This command can only be used on a server.')
         return
     else:
