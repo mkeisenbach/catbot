@@ -20,12 +20,14 @@ from dateutil.parser import parse
 from gyms import Gyms
 from pokemon import Pokemon
 from catbot_log import CatbotLog
+from discord.ext.commands import CommandNotFound
 
 BOT_PREFIX = '!'
 GYMFILE = 'gyms.csv'
 POKEMONFILE = 'pokedex.csv'
 PARAMSFILE = 'params.pickle'
-LOGFILE = 'log.txt'
+HOST_LOGFILE = 'host.log'
+ERROR_LOGFILE = 'error.log'
 EGG_URL_BASE = 'https://ironcreek.net/catbot/eggs/'
 EGG1 = 'egg1.png'
 EGG3 = 'egg3.png'
@@ -295,6 +297,13 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+
+@bot.event
+async def on_message_error(ctx, error):
+    if isinstance(error, CommandNotFound):
+        log = open(ERROR_LOGFILE, 'a')
+        log.write(ctx.guild, error)
+        log.close()
 
 @bot.command()
 async def whereis(ctx, *args):
@@ -674,7 +683,7 @@ try:
 except IOError:
     pass
 
-CatbotLog.init(LOGFILE)
+CatbotLog.init(HOST_LOGFILE)
 
 if __name__ == "__main__":
     dotenv.load_dotenv()
