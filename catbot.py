@@ -155,6 +155,7 @@ def process_do(arg_str):
 
 def parse_host_args(args: list):
     args = ' '.join(args)
+    args = re.sub(r'[\[\](){}]', '', args)
 
     p = r'(.+) (hatch|end|start)\D*(\d+) ?(?:min)?(?:s|utes?)? ?(.*)'
     m = re.match(p, args, re.IGNORECASE)
