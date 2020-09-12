@@ -589,7 +589,7 @@ async def host(ctx, *args):
         'Usage: !host [T1-5 or boss] [hatches|starts|ends] in mins (optional notes)\nExample: !host heatran ends in 30 mins'
         await ctx.send(content)
 
-        CatbotLog.write('Parse Error', 'host ' + ' '.join(args))
+        CatbotLog.write('Parse Error', 'host ' + ' '.join(args), ctx.guild)
         return
 
     when = '{}ing in {} mins'.format(parsed["verb"], parsed["mins"])
