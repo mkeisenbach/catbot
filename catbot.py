@@ -302,7 +302,7 @@ async def on_message(message):
 async def on_command_error(ctx, exception):
     if isinstance(exception, CommandNotFound):
         log = open(ERROR_LOGFILE, 'a')
-        log.write('{}, {}'.format(exception, ctx.guild))
+        log.write('{}, {}\n'.format(exception, ctx.guild))
         log.close()
         return
 
