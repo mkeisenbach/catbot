@@ -299,14 +299,14 @@ async def on_message(message):
 
 
 @bot.event
-async def on_message_error(context, exception):
+async def on_command_error(ctx, exception):
     if isinstance(exception, CommandNotFound):
         log = open(ERROR_LOGFILE, 'a')
-        log.write(context.guild, exception)
+        log.write('{}, {}'.format(exception, ctx.guild))
         log.close()
         return
 
-    print('Ignoring exception in command {}:'.format(context.command),
+    print('Ignoring exception in command {}:'.format(ctx.command),
           file=sys.stderr)
 
 

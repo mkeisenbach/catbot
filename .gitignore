@@ -9,3 +9,5 @@ discord_key.sh
 .env
 params.pickle
 log.txt
+host.log
+error.log
