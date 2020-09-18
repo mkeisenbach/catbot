@@ -593,9 +593,9 @@ async def host(ctx, *args):
             await ctx.send('Reporting channels not found')
             return
 
-    parsed = parse_host_args(args)
+    parsed = parse_host_now(args)
     if not parsed:
-        parsed = parse_host_now(args)
+        parsed = parse_host_args(args)
     if not parsed:
         parsed = parse_host_mins_left(args)
 
