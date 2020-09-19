@@ -41,6 +41,7 @@
 35,Clefairy,035_000
 36,Clefable,036_000
 37,Vulpix,037_000
+37,Alolan Vulpix,037_061
 38,Ninetales,038_000
 39,Jigglypuff,039_000
 40,Wigglytuff,040_000
@@ -78,6 +79,7 @@
 72,Tentacool,072_000
 73,Tentacruel,073_000
 74,Geodude,074_000
+74,Alolan Geodude,074_061
 75,Graveler,075_000
 76,Golem,076_000
 77,Ponyta,077_000
@@ -109,7 +111,7 @@
 103,Exeggutor,103_000
 104,Cubone,104_000
 105,Marowak,105_000
-105,Alolan Marowak,105_080
+105,Alolan Marowak,105_061
 106,Hitmonlee,106_000
 107,Hitmonchan,107_000
 108,Lickitung,108_000
