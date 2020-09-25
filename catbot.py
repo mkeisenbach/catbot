@@ -424,10 +424,12 @@ async def raid(ctx, boss, time_left, *args):
 @bot.command()
 @commands.has_any_role('Developer', 'Admin')
 async def set_legendaries(ctx, *args):
-    if len(args) > 0:
-        params['legendaries'] = list(map(str.lower, args))
-    await ctx.message.add_reaction('👍')
+    if len(args) == 0:
+        await ctx.send('Usage: !set_legendaries leg1 leg2 ...')
+        return
 
+    params['legendaries'] = list(map(str.lower, args))
+    await ctx.message.add_reaction('👍')
     save_params(PARAMSFILE, params)
 
 
@@ -585,8 +587,8 @@ async def host(ctx, *args):
         CatbotLog.write('Error', 'Host command sent via DM')
         await ctx.send('This command can only be used on a server.')
         return
-    else:
-        reporting_channels = get_reporting_channels(ctx)
+
+    reporting_channels = get_reporting_channels(ctx)
 
     for key, channel in reporting_channels.items():
         if channel is None:
@@ -645,8 +647,8 @@ def is_n_minutes_old(timestamp, minutes):
     return (dt.datetime.utcnow() - timestamp) > dt.timedelta(minutes=minutes)
 
 
-@commands.has_any_role('TR Scientist', 'mod', 'Mod')
-@bot.command()
+@commands.has_any_role('TR Scientist', 'Admin', 'mod', 'Mod')
+@bot.command(aliases=["purge_old"])
 async def purge_old_messages(ctx, age_in_minutes=2*60):
     deleted = await ctx.channel.purge(limit=100,
                                       check=lambda m: is_n_minutes_old(m.created_at,
