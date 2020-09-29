@@ -66,11 +66,51 @@ ERR_INVALID_DATETIME = "Invalid date or time"
 # =============================================================================
 # Helper and test functions
 # =============================================================================
-
-
-def generate_post(is_egg, identifier, mins, gym, reporter):
+def generate_embed(is_egg, identifier, mins, gym, reporter, server):
     time = dt.datetime.now() + dt.timedelta(minutes=int(mins))
-    link = gyms.get_link(gym)
+
+    if is_egg:
+        title = 'Tier ' + identifier
+        thumbnail = get_thumbnail('t'+identifier)
+        when = 'hatches at {} (in {} mins)'\
+            .format(time.strftime("%I:%M %p"), mins)
+    else:
+        title = identifier.title()
+        thumbnail = get_thumbnail(identifier)
+        when = "despawns at {} ({} mins remaining)"\
+            .format(time.strftime("%I:%M %p"), mins)
+
+    if server.name == 'Test Server' or \
+            server.name == '(Official) Pokémon GO: Fremont':
+        link = '<Location hidden due to COVID-19>'
+    else:
+        link = gyms.get_link(gym)
+    gym_name = gyms.get_name(gym)
+
+    if gyms.is_ex(gym):
+        gym_name = gym_name + ' 🎫'
+
+    embed = Embed(title=title,
+                  description="React with a 👍 if you're interested.")
+    embed.add_field(name="Where", value=link)
+
+    embed.add_field(name="When", value=when)
+    embed.add_field(name="Reported by", value=reporter)
+
+    if thumbnail != '':
+        embed.set_thumbnail(url=thumbnail)
+
+    return embed
+
+
+def generate_post(is_egg, identifier, mins, gym, reporter, server):
+    time = dt.datetime.now() + dt.timedelta(minutes=int(mins))
+
+    if server.name == 'Test Server' or \
+            server.name == '(Official) Pokémon GO: Fremont':
+        link = '<Location hidden due to COVID-19>'
+    else:
+        link = gyms.get_link(gym)
     gym_name = gyms.get_name(gym)
     if gyms.is_ex(gym):
         gym_name = gym_name + ' 🎫'
@@ -298,17 +338,19 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-@bot.event
-async def on_command_error(ctx, exception):
-    if isinstance(exception, CommandNotFound):
-        log = open(ERROR_LOGFILE, 'a')
-        log.write('{}, {}\n'.format(exception, ctx.guild))
-        log.close()
-        return
-
-    print('Ignoring exception in command {}:'.format(ctx.command),
-          file=sys.stderr)
-
+# =============================================================================
+# @bot.event
+# async def on_command_error(ctx, exception):
+#     if isinstance(exception, CommandNotFound):
+#         log = open(ERROR_LOGFILE, 'a')
+#         log.write('{}, {}\n'.format(exception, ctx.guild))
+#         log.close()
+#         return
+# 
+#     print('Ignoring exception in command {}:'.format(ctx.command),
+#           file=sys.stderr)
+# 
+# =============================================================================
 
 @bot.command()
 async def whereis(ctx, *args):
@@ -362,16 +404,16 @@ async def egg(ctx, egg_level, until_hatch, *args):
         await ctx.send(ERR_GYM_NOT_FOUND.format(gym))
     elif len(found) == 1:
         reporter = ctx.message.author.mention
-        content = generate_post(
-            True, egg_level, until_hatch, found[0], reporter)
+        embed = generate_embed(True, egg_level, until_hatch, found[0],
+                               reporter, ctx.message.guild)
 
-        if egg_level == '5':
-            content = '{} {}'.format(legendary_role.mention, content)
+        # if egg_level == '5':
+        #     content = '{} {}'.format(legendary_role.mention, content)
 
-        if egg_level == '6' and mega_role is not None:
-            content = '{} {}'.format(mega_role.mention, content)
+        # if egg_level == '6' and mega_role is not None:
+        #     content = '{} {}'.format(mega_role.mention, content)
 
-        await report_channel.send(content)
+        await report_channel.send(embed=embed)
         await ctx.send('Egg reported to ' + report_channel.mention)
     else:
         await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(gym))
@@ -410,12 +452,13 @@ async def raid(ctx, boss, time_left, *args):
         await ctx.send(ERR_GYM_NOT_FOUND.format(gym))
     elif len(found) == 1:
         reporter = ctx.message.author.mention
-        content = generate_post(False, boss, time_left, found[0], reporter)
+        embed = generate_embed(False, boss, time_left, found[0], reporter,
+                               ctx.message.guild)
 
-        if is_legendary(boss):
-            content = '{} {}'.format(legendary_role.mention, content)
+#        if is_legendary(boss):
+#            content = '{} {}'.format(legendary_role.mention, content)
 
-        await report_channel.send(content)
+        await report_channel.send(embed=embed)
         await ctx.send('Raid reported to ' + report_channel.mention)
     else:
         await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(gym))
