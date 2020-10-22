@@ -111,6 +111,7 @@ class CatbotTests(unittest.TestCase):
         self.assertEqual(cb.censor_notes('dm for code'), '...for code')
         self.assertEqual(cb.censor_notes('DM'), '...')
         self.assertEqual(cb.censor_notes('dm me'), '...')
+        self.assertEqual(cb.censor_notes('d.m'), '...')
         self.assertEqual(cb.censor_notes('direct message'), '...')
         self.assertEqual(cb.censor_notes('direct msg'), '...')
         self.assertEqual(cb.censor_notes('direct message me'), '...')
@@ -120,6 +121,9 @@ class CatbotTests(unittest.TestCase):
                          '... for code')
         self.assertEqual(cb.censor_notes('message for code'),
                          '...for code')
+        self.assertEqual(cb.censor_notes('text me'), '...')
+        self.assertEqual(cb.censor_notes('txt me'), '...')
+        self.assertEqual(cb.censor_notes('text me for'), '... for')
 
 if __name__ == '__main__':
     unittest.main()

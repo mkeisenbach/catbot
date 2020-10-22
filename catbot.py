@@ -194,12 +194,15 @@ def censor_notes(notes):
     friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
     notes = friendcode_pat.sub('<Friend code removed>', notes)
 
-    dm_me_pat = re.compile(r'dm(\s+|$)(me)?', re.IGNORECASE)
+    dm_me_pat = re.compile(r'd.?m(\s+|$)(me)?', re.IGNORECASE)
     notes = dm_me_pat.sub('...', notes)
 
     dm_me_pat2 = re.compile(r'(direct\s*)?me?ss?a?ge?(\s*|$)(me)?',
                             re.IGNORECASE)
     notes = dm_me_pat2.sub('...', notes)
+
+    dm_me_pat3 = re.compile(r'te?xt me', re.IGNORECASE)
+    notes = dm_me_pat3.sub('...', notes)
 
     return notes
 
