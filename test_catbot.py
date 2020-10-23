@@ -108,6 +108,7 @@ class CatbotTests(unittest.TestCase):
     def test_censor_notes(self):
         self.assertEqual(cb.censor_notes('prefer instinct'), 'prefer instinct')
         self.assertEqual(cb.censor_notes('dm'), '...')
+        self.assertEqual(cb.censor_notes('pm'), '...')
         self.assertEqual(cb.censor_notes('dm for code'), '...for code')
         self.assertEqual(cb.censor_notes('DM'), '...')
         self.assertEqual(cb.censor_notes('dm me'), '...')
