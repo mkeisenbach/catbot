@@ -655,7 +655,8 @@ def is_n_minutes_old(timestamp, minutes):
 async def purge_old_messages(ctx, age_in_minutes=2*60):
     deleted = await ctx.channel.purge(limit=100,
                                       check=lambda m: is_n_minutes_old(m.created_at,
-                                                                       age_in_minutes))
+                                                                       age_in_minutes) 
+                                      and not m.pinned)
     await ctx.send('Deleted {} message(s)'.format(len(deleted)),
                    delete_after=10)
     await ctx.message.delete()
