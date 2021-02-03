@@ -113,6 +113,7 @@ class CatbotTests(unittest.TestCase):
         self.assertEqual(cb.censor_notes('DM'), '...')
         self.assertEqual(cb.censor_notes('dm me'), '...')
         self.assertEqual(cb.censor_notes('d.m'), '...')
+        self.assertEqual(cb.censor_notes('d//m'), '...')
         self.assertEqual(cb.censor_notes('direct message'), '...')
         self.assertEqual(cb.censor_notes('direct msg'), '...')
         self.assertEqual(cb.censor_notes('direct message me'), '...')

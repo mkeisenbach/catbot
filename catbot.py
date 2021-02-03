@@ -194,7 +194,7 @@ def censor_notes(notes):
     friendcode_pat = re.compile(r'\d{4}[-\s]*\d{4}[-\s]*\d{4}')
     notes = friendcode_pat.sub('<Friend code removed>', notes)
 
-    dm_me_pat = re.compile(r'[dp].?m(\s+|$)(me)?', re.IGNORECASE)
+    dm_me_pat = re.compile(r'[dp]\W*m(\s+|$)(me)?', re.IGNORECASE)
     notes = dm_me_pat.sub('...', notes)
 
     dm_me_pat2 = re.compile(r'(direct\s*)?me?ss?a?ge?(\s*|$)(me)?',
