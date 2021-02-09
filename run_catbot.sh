@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PYTHON=python
+PYTHON=python3
 RESTART_DELAY_S=10
 
 while true;
