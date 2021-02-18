@@ -591,6 +591,10 @@ async def host(ctx, *args):
         await ctx.send('This command can only be used on a server.')
         return
 
+    if ctx.channel != '💥-hosting-commands':
+        await ctx.send('This command can only be used from #💥-hosting-commands.')
+        return
+    
     reporting_channels = get_reporting_channels(ctx)
 
     for key, channel in reporting_channels.items():
