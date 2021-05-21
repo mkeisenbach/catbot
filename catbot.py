@@ -425,7 +425,7 @@ async def raid(ctx, boss, time_left, *args):
 
 
 @bot.command()
-@commands.has_any_role('Developer', 'Admin')
+@commands.has_any_role('Developer', 'Admin', 'mod')
 async def set_legendaries(ctx, *args):
     if len(args) == 0:
         await ctx.send('Usage: !set_legendaries leg1 leg2 ...')
@@ -437,7 +437,7 @@ async def set_legendaries(ctx, *args):
 
 
 @bot.command()
-@commands.has_any_role('Developer', 'Admin')
+@commands.has_any_role('Developer', 'Admin', 'mod')
 async def get_legendaries(ctx):
     legendaries = params.get('legendaries', [])
     msg = ', '.join([el.title() for el in legendaries])
