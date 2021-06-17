@@ -380,6 +380,83 @@ async def egg(ctx, egg_level, until_hatch, *args):
         await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(gym))
 
 
+def parse_raid(args: list):
+    args = ' '.join(args)
+    args = re.sub(r'[\[\](){}]', '', args)
+
+    p = r'(\w+) ends in (\d+) at (.*)'
+    m = re.match(p, args, re.IGNORECASE)
+    if m:
+        return {'boss': m.groups()[0], 'mins': m.groups()[1],
+                'gym': m.groups()[2]}
+    return {}
+
+
+def parse_raid_old(args: list):
+    args = ' '.join(args)
+    p = r'(.*) (\d+) (.*)'
+    m = re.match(p, args, re.IGNORECASE)
+    if m:
+        return {'boss': m.groups()[0], 'mins': m.groups()[1],
+                'gym': m.groups()[2]}
+    return {}
+
+
+def create_raid_embed(title, reporter, mins, gym, thumbnail=''):
+    time = dt.datetime.now() + dt.timedelta(minutes=int(mins))
+
+    embed = Embed(title=title.title(),
+                  description='React with team emoji if interested')
+    embed.add_field(name="Reported by", value=reporter)
+    embed.add_field(name="Ends", value='at {} in {} mins'.format(time, mins))
+    embed.add_field(name="Gym", value=gyms.get_name(gym))
+    embed.add_field(name="Location", value=gyms.get_link(gym))
+
+    if thumbnail != '':
+        embed.set_thumbnail(url=thumbnail)
+
+    return embed
+
+
+@bot.command()
+async def raid_new(ctx, *args):
+    if ctx.guild is None:
+        await ctx.send('This command can only be used on a server.')
+        return
+
+    report_channel = utils.get(ctx.guild.channels, name=REPORT_CHANNEL_NAME)
+    if report_channel is None:
+        await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
+        return
+
+    parsed = parse_raid(args)
+    if not parsed:
+        parsed = parse_raid_old()
+
+    if not parsed:
+        content = 'Usage: !raid [boss] ends in [mins] at [gym] \nExample: !raid Regirock ends in 30 at ICP'
+        await ctx.send(content)
+
+    found = pokemon.find(parsed["boss"])
+    if found != '' and found != parsed["boss"].lower():
+        parsed["boss"] = found
+
+    thumbnail = get_thumbnail(parsed['boss'])
+
+    found = gyms.find(parsed['gym'])
+    if len(found) == 0:
+        await ctx.send(ERR_GYM_NOT_FOUND.format(parsed['gym']))
+        return
+    elif len(found) == 1:
+        embed = create_raid_embed(parsed['boss'], ctx.author.mention,
+                                  parsed["mins"], found[0], thumbnail)
+
+        await report_channel.send(embed=embed, delete_after=2*60*60)
+        await ctx.send('Raid reported to ' + report_channel.mention)
+    else:
+        await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(parsed['gym']))
+
+
 @bot.command()
 async def raid(ctx, boss, time_left, *args):
     mention = ['shinx']
@@ -594,7 +671,7 @@ async def host(ctx, *args):
     if ctx.channel.name != '💥-hosting-commands':
         await ctx.send('This command can only be used from #💥-hosting-commands.')
         return
-    
+
     reporting_channels = get_reporting_channels(ctx)
 
     for key, channel in reporting_channels.items():
@@ -659,7 +736,7 @@ def is_n_minutes_old(timestamp, minutes):
 async def purge_old_messages(ctx, age_in_minutes=2*60):
     deleted = await ctx.channel.purge(limit=100,
                                       check=lambda m: is_n_minutes_old(m.created_at,
-                                                                       age_in_minutes) 
+                                                                       age_in_minutes)
                                       and not m.pinned)
     await ctx.send('Deleted {} message(s)'.format(len(deleted)),
                    delete_after=10)
