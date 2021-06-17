@@ -406,10 +406,12 @@ def create_raid_embed(title, reporter, mins, gym, thumbnail=''):
     time = dt.datetime.now() + dt.timedelta(minutes=int(mins))
 
     embed = Embed(title=title.title(),
-                  description='React with team emoji if interested')
+                  description='React with 👍 if interested')
+    embed.add_field(name="Where", value=gyms.get_name(gym))
+    embed.add_field(name="When",
+                    value='at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
+                                                    mins))
     embed.add_field(name="Reported by", value=reporter)
-    embed.add_field(name="Ends", value='at {} in {} mins'.format(time, mins))
-    embed.add_field(name="Gym", value=gyms.get_name(gym))
     embed.add_field(name="Location", value=gyms.get_link(gym))
 
     if thumbnail != '':
@@ -431,11 +433,12 @@ async def raid_new(ctx, *args):
 
     parsed = parse_raid(args)
     if not parsed:
-        parsed = parse_raid_old()
+        parsed = parse_raid_old(args)
 
     if not parsed:
         content = 'Usage: !raid [boss] ends in [mins] at [gym] \nExample: !raid Regirock ends in 30 at ICP'
         await ctx.send(content)
+        return
 
     found = pokemon.find(parsed["boss"])
     if found != '' and found != parsed["boss"].lower():
