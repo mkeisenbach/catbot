@@ -309,8 +309,9 @@ async def on_command_error(ctx, exception):
         log.close()
         return
 
-    print('Ignoring exception in command {}:'.format(ctx.command),
-          file=sys.stderr)
+    bot.on_command_error(ctx, exception)
+#    print('Ignoring exception in command {}:'.format(ctx.command),
+#          file=sys.stderr)
 
 
 @bot.command()
@@ -408,7 +409,7 @@ def create_raid_embed(title, reporter, mins, gym, thumbnail=''):
     embed = Embed(title=title.title(),
                   description='React with 👍 if interested')
     embed.add_field(name="Where", value=gyms.get_name(gym))
-    embed.add_field(name="When",
+    embed.add_field(name="Ends",
                     value='at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
                                                     mins))
     embed.add_field(name="Reported by", value=reporter)
@@ -454,7 +455,7 @@ async def raid_new(ctx, *args):
         embed = create_raid_embed(parsed['boss'], ctx.author.mention,
                                   parsed["mins"], found[0], thumbnail)
 
-        await report_channel.send(embed=embed, delete_after=2*60*60)
+        await report_channel.send(embed=embed)
         await ctx.send('Raid reported to ' + report_channel.mention)
     else:
         await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(parsed['gym']))
