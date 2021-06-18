@@ -393,7 +393,8 @@ async def egg_new(ctx, *args):
         embed = create_egg_raid_embed('T'+parsed['egg'], ctx.author.mention,
                                       when, found[0], thumbnail)
 
-        await report_channel.send(embed=embed)
+        msg = await report_channel.send(content)
+        await msg.add_reaction('👍')        
         await ctx.send('Egg reported to ' + report_channel.mention)
     else:
         await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(parsed['gym']))
@@ -439,8 +440,7 @@ async def egg(ctx, egg_level, until_hatch, *args):
         if egg_level == '6' and mega_role is not None:
             content = '{} {}'.format(mega_role.mention, content)
 
-        msg = await report_channel.send(content)
-        await msg.add_reaction('👍')
+        await report_channel.send(content)
         await ctx.send('Egg reported to ' + report_channel.mention)
     else:
         await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(gym))
