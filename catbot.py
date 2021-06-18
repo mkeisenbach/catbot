@@ -390,7 +390,7 @@ async def egg_new(ctx, *args):
         time = dt.datetime.now() + dt.timedelta(minutes=int(parsed['mins']))
         when = 'hatches at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
                                                    parsed['mins'])
-        embed = create_raid_egg_embed('T'+parsed['egg'], ctx.author.mention,
+        embed = create_egg_raid_embed('T'+parsed['egg'], ctx.author.mention,
                                       when, found[0], thumbnail)
 
         await report_channel.send(embed=embed)
@@ -467,7 +467,7 @@ def parse_raid_old(args: list):
     return {}
 
 
-def create_raid_egg_embed(title, reporter, when, gym, thumbnail=''):
+def create_egg_raid_embed(title, reporter, when, gym, thumbnail=''):
     embed = Embed(title=title.title(),
                   description='React with 👍 if interested')
     embed.add_field(name="Where", value=gyms.get_name(gym))
@@ -516,7 +516,7 @@ async def raid_new(ctx, *args):
         time = dt.datetime.now() + dt.timedelta(minutes=int(parsed['mins']))
         when = 'despawns at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
                                            parsed['mins'])
-        embed = create_embed(parsed['boss'], ctx.author.mention,
+        embed = create_egg_raid_embed(parsed['boss'], ctx.author.mention,
                                   when, found[0], thumbnail)
 
         await report_channel.send(embed=embed)
