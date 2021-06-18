@@ -63,13 +63,17 @@ class Gyms:
     def find(self, name):
         found = []
 
-        new_name = process_name(name)
-        if new_name in self.gyms.keys():
-            found = [new_name]
-        else:
-            found = self.search_names(new_name)
-            if len(found) == 0:
-                found = self.search_aliases(new_name)
+        processed_name = process_name(name)
+
+        if processed_name in self.aliases.keys():
+            found = [self.aliases[processed_name]]
+
+        if not found:
+            if processed_name in self.gyms.keys():
+                found = [processed_name]
+
+        if not found:
+            found = self.search_names(processed_name)
 
         return found
 

@@ -16,6 +16,12 @@ class GymTests(unittest.TestCase):
     def test_gym_not_found(self):
         self.assertEqual(len(self.gyms.find('asdf')), 0)
 
+    def test_aliases(self):
+        self.assertEqual(self.gyms.find('VMP'),
+                         ['veteransmemorialparkfremontvmp'])
+        self.assertEqual(self.gyms.find('VMPUC'),
+                         ['veteransmemorialparkunioncityvmpuc'])
+
 
 if __name__ == '__main__':
     unittest.main()
