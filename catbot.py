@@ -21,6 +21,7 @@ from gyms import Gyms
 from pokemon import Pokemon
 from catbot_log import CatbotLog
 from discord.ext.commands import CommandNotFound
+import traceback
 
 BOT_PREFIX = '!'
 GYMFILE = 'gyms.csv'
@@ -311,7 +312,10 @@ async def on_command_error(ctx, exception):
         log.close()
         return
 
-    await bot.on_command_error(ctx, exception)
+    print('Ignoring exception in command {}:'.format(ctx.command),
+          file=sys.stderr)
+    traceback.print_exception(type(exception), exception,
+                              exception.__traceback__, file=sys.stderr)
 
 
 @bot.command()
