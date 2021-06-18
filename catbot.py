@@ -774,8 +774,8 @@ async def host(ctx, *args):
 
     thumbnail = get_thumbnail(parsed['boss'])
 
-    embed = create_raid_egg_embed(parsed['boss'], ctx.author, when,
-                         parsed['notes'], thumbnail)
+    embed = create_embed(parsed['boss'], ctx.author, when, parsed['notes'],
+                         thumbnail)
 
     tier = get_raid_tier(parsed['boss'])
 
