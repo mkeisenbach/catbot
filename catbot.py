@@ -439,7 +439,8 @@ async def egg(ctx, egg_level, until_hatch, *args):
         if egg_level == '6' and mega_role is not None:
             content = '{} {}'.format(mega_role.mention, content)
 
-        await report_channel.send(content)
+        msg = await report_channel.send(content)
+        await msg.add_reaction('👍')
         await ctx.send('Egg reported to ' + report_channel.mention)
     else:
         await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(gym))
@@ -469,7 +470,7 @@ def parse_raid_old(args: list):
 
 def create_egg_raid_embed(title, reporter, when, gym, thumbnail=''):
     embed = Embed(title=title.title(),
-                  description='React with 👍 if interested')
+                  description='React with thumbs up if interested')
     embed.add_field(name="Where", value=gyms.get_name(gym))
     embed.add_field(name="When",
                     value=when)
@@ -517,9 +518,10 @@ async def raid_new(ctx, *args):
         when = 'despawns at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
                                            parsed['mins'])
         embed = create_egg_raid_embed(parsed['boss'], ctx.author.mention,
-                                  when, found[0], thumbnail)
+                                      when, found[0], thumbnail)
 
-        await report_channel.send(embed=embed)
+        msg = await report_channel.send(embed=embed)
+        await msg.add_reaction('👍')
         await ctx.send('Raid reported to ' + report_channel.mention)
     else:
         await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(parsed['gym']))
