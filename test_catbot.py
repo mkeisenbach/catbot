@@ -79,6 +79,10 @@ class CatbotTests(unittest.TestCase):
                          cb.EGG_URL_BASE + cb.EGG1)
         self.assertEqual(cb.get_thumbnail('T1'),
                          cb.EGG_URL_BASE + cb.EGG1)
+        self.assertEqual(cb.get_thumbnail('6'),
+                         cb.EGG_URL_BASE + cb.EGG_MEGA)
+        self.assertEqual(cb.get_thumbnail('MEGA'),
+                         cb.EGG_URL_BASE + cb.EGG_MEGA)
 
         self.assertNotEqual(cb.get_thumbnail('heatran'), '')
         self.assertNotEqual(cb.get_thumbnail('Mega Charizard X'), '')
@@ -126,6 +130,43 @@ class CatbotTests(unittest.TestCase):
         self.assertEqual(cb.censor_notes('text me'), '...')
         self.assertEqual(cb.censor_notes('txt me'), '...')
         self.assertEqual(cb.censor_notes('text me for'), '... for')
+
+    def test_parse_raid_pos(self):
+        test_strings = [
+            'Mega Slowpoke ends in 45 at Irvington Community Park'
+            ]
+        for args in test_strings:
+            self.assertTrue(cb.parse_raid(args.split()),
+                            'FAILED ON: ' + args)
+
+    def test_parse_raid_old_pos(self):
+        test_strings = [
+            'Mega Slowpoke 45 Irvington Community Park'
+            ]
+        for args in test_strings:
+            self.assertTrue(cb.parse_raid_old(args.split()),
+                            'FAILED ON: ' + args)
+
+    def test_parse_egg_pos(self):
+        test_strings = [
+            '1 hatches in 45 at Irvington Community Park',
+            '5 hatches in 45 at Irvington Community Park',
+            '6 hatches in 45 at Irvington Community Park'
+            ]
+        for args in test_strings:
+            self.assertTrue(cb.parse_egg(args.split()),
+                            'FAILED ON: ' + args)
+
+    def test_parse_egg_old_pos(self):
+        test_strings = [
+            '1 45 Irvington Community Park',
+            '5 45 Irvington Community Park',
+            '6 45 Irvington Community Park'
+            ]
+        for args in test_strings:
+            self.assertTrue(cb.parse_egg_old(args.split()),
+                            'FAILED ON: ' + args)
+
 
 if __name__ == '__main__':
     unittest.main()

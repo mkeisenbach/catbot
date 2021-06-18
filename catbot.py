@@ -212,8 +212,10 @@ def get_egg_url(level):
         thumbnail = 'egg1.png'
     elif level <= 4:
         thumbnail = 'egg3.png'
-    else:
+    elif level == 5:
         thumbnail = 'legendary_egg.png'
+    else:
+        thumbnail = 'mega_egg.png'
     return EGG_URL_BASE+thumbnail
 
 
@@ -310,8 +312,6 @@ async def on_command_error(ctx, exception):
         return
 
     bot.on_command_error(ctx, exception)
-#    print('Ignoring exception in command {}:'.format(ctx.command),
-#          file=sys.stderr)
 
 
 @bot.command()
@@ -333,6 +333,66 @@ async def whereis(ctx, *args):
         content = ERR_TOO_MANY_RESULTS
 
     await ctx.send(content)
+
+
+def parse_egg(args: list):
+    args = ' '.join(args)
+    args = re.sub(r'[\[\](){}]', '', args)
+
+    p = r't?([1-6]) hatches in (\d+) at (.*)'
+    m = re.match(p, args, re.IGNORECASE)
+    if m:
+        return {'egg': m.groups()[0], 'mins': m.groups()[1],
+                'gym': m.groups()[2]}
+    return {}
+
+
+def parse_egg_old(args: list):
+    args = ' '.join(args)
+    p = r'([1-6]) (\d+) (.*)'
+    m = re.match(p, args, re.IGNORECASE)
+    if m:
+        return {'egg': m.groups()[0], 'mins': m.groups()[1],
+                'gym': m.groups()[2]}
+    return {}
+
+@bot.command()
+async def egg_new(ctx, *args):
+    if ctx.guild is None:
+        await ctx.send('This command can only be used on a server.')
+        return
+
+    report_channel = utils.get(ctx.guild.channels, name=REPORT_CHANNEL_NAME)
+    if report_channel is None:
+        await ctx.send(REPORT_CHANNEL_NAME + ' channel not found')
+        return
+
+    parsed = parse_egg(args)
+    if not parsed:
+        parsed = parse_egg_old(args)
+
+    if not parsed:
+        content = 'Usage: !egg [1-6] hatches in [mins] at [gym] \nExample: !egg 5 hatches in 10 at ICP'
+        await ctx.send(content)
+        return
+
+    thumbnail = get_thumbnail(parsed['egg'])
+
+    found = gyms.find(parsed['gym'])
+    if len(found) == 0:
+        await ctx.send(ERR_GYM_NOT_FOUND.format(parsed['gym']))
+        return
+    elif len(found) == 1:
+        time = dt.datetime.now() + dt.timedelta(minutes=int(parsed['mins']))
+        when = 'hatches at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
+                                                   parsed['mins'])
+        embed = create_raid_egg_embed('T'+parsed['egg'], ctx.author.mention,
+                                      when, found[0], thumbnail)
+
+        await report_channel.send(embed=embed)
+        await ctx.send('Egg reported to ' + report_channel.mention)
+    else:
+        await ctx.send(ERR_REPORT_MULTIPLE_MATCHES.format(parsed['gym']))
 
 
 @bot.command()
@@ -385,7 +445,7 @@ def parse_raid(args: list):
     args = ' '.join(args)
     args = re.sub(r'[\[\](){}]', '', args)
 
-    p = r'(\w+) ends in (\d+) at (.*)'
+    p = r'([\w\s]+) ends in (\d+) at (.*)'
     m = re.match(p, args, re.IGNORECASE)
     if m:
         return {'boss': m.groups()[0], 'mins': m.groups()[1],
@@ -403,15 +463,12 @@ def parse_raid_old(args: list):
     return {}
 
 
-def create_raid_embed(title, reporter, mins, gym, thumbnail=''):
-    time = dt.datetime.now() + dt.timedelta(minutes=int(mins))
-
+def create_raid_egg_embed(title, reporter, when, gym, thumbnail=''):
     embed = Embed(title=title.title(),
                   description='React with 👍 if interested')
     embed.add_field(name="Where", value=gyms.get_name(gym))
-    embed.add_field(name="Ends",
-                    value='at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
-                                                    mins))
+    embed.add_field(name="When",
+                    value=when)
     embed.add_field(name="Reported by", value=reporter)
     embed.add_field(name="Location", value=gyms.get_link(gym))
 
@@ -452,8 +509,11 @@ async def raid_new(ctx, *args):
         await ctx.send(ERR_GYM_NOT_FOUND.format(parsed['gym']))
         return
     elif len(found) == 1:
-        embed = create_raid_embed(parsed['boss'], ctx.author.mention,
-                                  parsed["mins"], found[0], thumbnail)
+        time = dt.datetime.now() + dt.timedelta(minutes=int(parsed['mins']))
+        when = 'despawns at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
+                                           parsed['mins'])
+        embed = create_embed(parsed['boss'], ctx.author.mention,
+                                  when, found[0], thumbnail)
 
         await report_channel.send(embed=embed)
         await ctx.send('Raid reported to ' + report_channel.mention)
@@ -624,7 +684,7 @@ def is_legendary(boss):
 def get_thumbnail(boss):
     thumbnail = ''
 
-    m = re.match('t([12345])', boss, re.IGNORECASE)
+    m = re.match('t?([123456])', boss, re.IGNORECASE)
     if m is not None:
         thumbnail = get_egg_url(int(m.groups()[0]))
         return thumbnail
@@ -710,7 +770,7 @@ async def host(ctx, *args):
 
     thumbnail = get_thumbnail(parsed['boss'])
 
-    embed = create_embed(parsed['boss'], ctx.author, when,
+    embed = create_raid_egg_embed(parsed['boss'], ctx.author, when,
                          parsed['notes'], thumbnail)
 
     tier = get_raid_tier(parsed['boss'])
