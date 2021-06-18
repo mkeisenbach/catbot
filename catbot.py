@@ -311,7 +311,7 @@ async def on_command_error(ctx, exception):
         log.close()
         return
 
-    bot.on_command_error(ctx, exception)
+    await bot.on_command_error(ctx, exception)
 
 
 @bot.command()
