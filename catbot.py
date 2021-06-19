@@ -390,7 +390,11 @@ async def egg_new(ctx, *args):
         time = dt.datetime.now() + dt.timedelta(minutes=int(parsed['mins']))
         when = 'hatches at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
                                                    parsed['mins'])
-        embed = create_egg_raid_embed('T'+parsed['egg'], ctx.author.mention,
+        if parsed['egg'] == 6:
+            title = 'Mega Raid'
+        else:
+            title = 'Tier '+parsed['egg']
+        embed = create_egg_raid_embed(title, ctx.author.mention,
                                       when, found[0], thumbnail)
 
         msg = await report_channel.send(embed=embed)
