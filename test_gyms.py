@@ -16,11 +16,13 @@ class GymTests(unittest.TestCase):
     def test_gym_not_found(self):
         self.assertEqual(len(self.gyms.find('asdf')), 0)
 
-    def test_aliases(self):
+    def test_find_by_alias(self):
         self.assertEqual(self.gyms.find('VMP'),
                          ['veteransmemorialparkfremontvmp'])
         self.assertEqual(self.gyms.find('VMPUC'),
                          ['veteransmemorialparkunioncityvmpuc'])
+        self.assertEqual(self.gyms.find('Veterans Memorial Park Fremont'),
+                         ['veteransmemorialparkfremontvmp'])
 
 
 if __name__ == '__main__':
