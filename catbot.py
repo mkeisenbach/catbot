@@ -454,11 +454,11 @@ def parse_raid(args: list):
     args = ' '.join(args)
     args = re.sub(r'[\[\](){}]', '', args)
 
-    p = r'([\w\s]+) ends in (\d+) at (.*)'
+    p = r'([\w\s]+) (ends|despawns) in (\d+) at (.*)'
     m = re.match(p, args, re.IGNORECASE)
     if m:
-        return {'boss': m.groups()[0], 'mins': m.groups()[1],
-                'gym': m.groups()[2]}
+        return {'boss': m.groups()[0], 'mins': m.groups()[2],
+                'gym': m.groups()[3]}
     return {}
 
 

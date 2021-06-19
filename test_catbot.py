@@ -133,7 +133,8 @@ class CatbotTests(unittest.TestCase):
 
     def test_parse_raid_pos(self):
         test_strings = [
-            'Mega Slowpoke ends in 45 at Irvington Community Park'
+            'Mega Slowpoke ends in 45 at Irvington Community Park',
+            'Mega Slowpoke despawns in 45 at Irvington Community Park'
             ]
         for args in test_strings:
             self.assertTrue(cb.parse_raid(args.split()),
