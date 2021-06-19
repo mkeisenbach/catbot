@@ -393,7 +393,7 @@ async def egg_new(ctx, *args):
         embed = create_egg_raid_embed('T'+parsed['egg'], ctx.author.mention,
                                       when, found[0], thumbnail)
 
-        msg = await report_channel.send(embed)
+        msg = await report_channel.send(embed=embed)
         await msg.add_reaction('👍')
         await ctx.send('Egg reported to ' + report_channel.mention)
     else:
