@@ -390,7 +390,7 @@ async def egg_new(ctx, *args):
         time = dt.datetime.now() + dt.timedelta(minutes=int(parsed['mins']))
         when = 'hatches at {} (in {} mins)'.format(time.strftime("%I:%M %p"),
                                                    parsed['mins'])
-        if parsed['egg'] == 6:
+        if parsed['egg'] == '6':
             title = 'Mega Raid'
         else:
             title = 'Tier '+parsed['egg']
