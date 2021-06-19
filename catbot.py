@@ -503,7 +503,7 @@ async def raid_new(ctx, *args):
         parsed = parse_raid_old(args)
 
     if not parsed:
-        content = 'Usage: !raid [boss] ends in [mins] at [gym] \nExample: !raid Regirock ends in 30 at ICP'
+        content = 'Usage: !raid [boss] ends|despawns in [mins] at [gym] \nExample: !raid Regirock ends in 30 at ICP'
         await ctx.send(content)
         return
 
