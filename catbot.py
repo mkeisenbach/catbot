@@ -385,6 +385,7 @@ async def egg_new(ctx, *args):
 
     found = gyms.find(parsed['gym'])
     if len(found) == 0:
+        CatbotLog.write('Gym Error', 'egg_new ' + ' '.join(args), ctx.guild)                
         await ctx.send(ERR_GYM_NOT_FOUND.format(parsed['gym']))
         return
     elif len(found) == 1:
@@ -517,6 +518,7 @@ async def raid_new(ctx, *args):
 
     found = gyms.find(parsed['gym'])
     if len(found) == 0:
+        CatbotLog.write('Gym Error', 'raid_new ' + ' '.join(args), ctx.guild)        
         await ctx.send(ERR_GYM_NOT_FOUND.format(parsed['gym']))
         return
     elif len(found) == 1:
