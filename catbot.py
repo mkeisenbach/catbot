@@ -376,6 +376,7 @@ async def egg_new(ctx, *args):
         parsed = parse_egg_old(args)
 
     if not parsed:
+        CatbotLog.write('Parse Error', 'egg_new ' + ' '.join(args), ctx.guild)        
         content = 'Usage: !egg [1-6] hatches in [mins] at [gym] \nExample: !egg 5 hatches in 10 at ICP'
         await ctx.send(content)
         return
@@ -503,6 +504,7 @@ async def raid_new(ctx, *args):
         parsed = parse_raid_old(args)
 
     if not parsed:
+        CatbotLog.write('Parse Error', 'raid_new ' + ' '.join(args), ctx.guild)        
         content = 'Usage: !raid [boss] ends|despawns in [mins] at [gym] \nExample: !raid Regirock ends in 30 at ICP'
         await ctx.send(content)
         return
