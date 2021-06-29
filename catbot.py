@@ -361,7 +361,7 @@ def parse_egg_old(args: list):
     return {}
 
 @bot.command()
-async def egg_new(ctx, *args):
+async def egg(ctx, *args):
     if ctx.guild is None:
         await ctx.send('This command can only be used on a server.')
         return
@@ -407,7 +407,7 @@ async def egg_new(ctx, *args):
 
 
 @bot.command()
-async def egg(ctx, egg_level, until_hatch, *args):
+async def egg_old(ctx, egg_level, until_hatch, *args):
     report_channel = utils.get(ctx.guild.channels, name=REPORT_CHANNEL_NAME)
     if report_channel is None:
         print(REPORT_CHANNEL_NAME + ' channel not found')
@@ -490,7 +490,7 @@ def create_egg_raid_embed(title, reporter, when, gym, thumbnail=''):
 
 
 @bot.command()
-async def raid_new(ctx, *args):
+async def raid(ctx, *args):
     if ctx.guild is None:
         await ctx.send('This command can only be used on a server.')
         return
@@ -536,7 +536,7 @@ async def raid_new(ctx, *args):
 
 
 @bot.command()
-async def raid(ctx, boss, time_left, *args):
+async def raid_old(ctx, boss, time_left, *args):
     mention = ['shinx']
     report_channel = utils.get(ctx.guild.channels, name=REPORT_CHANNEL_NAME)
     if report_channel is None:
