@@ -30,7 +30,6 @@ c3b07b8328054f11bc5d3b594087d79a.16,,Armed Services Plaque,37.591699,-122.020383
 91157af40e55472d85f0b435eca7c023.16,,Bald Eagles,37.592172,-122.001718,300-398 Veneto Ave,Union City,CA,94587, USA,,0
 ,,Baskin Robbins,37.599185,-122.06903,32232 Dyer St,Union City,CA,94587,USA,,
 d5a84d1d095b450ca06e10c1fc333f14.16,,Bayview and Nike Trail Junction,37.556922,-122.097187,Bayview Trail,Fremont,CA,94555, USA,,0
-,,Fremont Hub Fountain (formerly BBNB),37.545244,-121.98714,Unnamed Road,Fremont,CA,94538,USA,,0
 7a23368bc3c542bb90359f92141829d0.11,,Bean Scene Cafe,37.53283,-121.959333,4000 Bay St,Fremont,CA,94538, USA,,0
 f35f18cc17ad4d71a6920be584df373e.16,,Bear Bench (Black Bear Diner),37.536729,-121.999574,5035 Mowry Ave,Fremont,CA,94538, USA,,0
 e50f2cb2ac7e4ea1a67933ac3bc73de9.16,,Bear Hunt,37.558878,-121.965181,39362-39424 Gallaudet Dr,Fremont,CA,94538, USA,,0
@@ -100,6 +99,7 @@ c30b55258ad744fcac427462f82b7024.16,,CloverLeaf Bowl,37.535179,-121.966276,40598
 61cd3d4457e54a0f82cd1dc0ba580c75.16,,Crab Apple Grove Memorial,37.597206,-122.077011,30901-30999 Randall Ct,Union City,CA,94587, USA,CrabApple,1
 84d7b31121984aba9ee8ac4eccd09b2d.16,,Crossroads Church,37.529069,-121.957629,41386Fremont Blvd,Fremont,CA,94538, USA,,0
 a9ec5a9d33204eff8accf1edfc264e46.16,,Dairy Glenn Campground,37.549709,-122.089507,Bayview Trail,Fremont,CA,94555, USA,,0
+,,Diamond Fountain 1,37.54226,-121.97176,39939 Stevenson Common,Fremont,CA,94538,,,
 85215d56c41d4803a0250696c8909c34.16,,Diamond Fountain 2,37.544583,-121.971521,Stevenson Common,Fremont,CA,94538, USA,,0
 d2649e7c9d5e41fc9019700e2171d183.16,,Dominican Sisters,37.532559,-121.918397,Dominican Terrace,Fremont,CA,94539, USA,,0
 63e2a47d9a994c78b3e66ab32ce7e3c2.16,,Don Edwards San Francisco Bay Information,37.532228,-122.073035,1 Marshlands Rd,Fremont,CA,94555, USA,,0
@@ -136,6 +136,7 @@ fd2b288a47f54fecb47d81cc0382cf16.16,ACE,Fremont ACE Station,37.559185,-122.00741
 715dc908ded24443adaed0a83e123d86.16,,Fremont Fire Station - Dog Ladder,37.485058,-121.926035,65-151 Hackamore Ln,Fremont,CA,94539, USA,,0
 b9b07e6e53ee402dbf9e4d47e1a01672.16,,Fremont Fountain,37.550825,-121.984386,3535-3563 Capitol Ave,Fremont,CA,94538, USA,,0
 ,Togos,Fremont Fountain (Togo's),37.567796,-122.025393,35670 Fremont Blvd,Fremont,CA,94536,USA,,0
+,,Fremont Hub Fountain (formerly BBNB),37.545244,-121.98714,Unnamed Road,Fremont,CA,94538,USA,,0
 67ec4a85942147799882efd353337237.16,,Fremont Skate Park,37.543652,-121.961741,40504-40554 Paseo Padre Pkwy,Fremont,CA,94538, USA,SkatePark,1
 2a9a8b276fe042a3a86b8f5479995987.16,,Fremont Ymca,37.522565,-121.967647,41601-41747 Blacow Rd,Fremont,CA,94538, USA,,0
 1b227f51517240f2a288a7538edf9dc3.16,,Fry's Tesla Coil,37.51556,-121.942876,43800 Osgood Rd,Fremont,CA,94539, USA,,0
@@ -292,12 +293,13 @@ ecdf9374d40441c18ca57677f1f884f8.16,,Rings Arch,37.584377,-122.068447,32500 Mete
 3f4c94cb1fe3464da787a439f230280a.16,,Roberto Memorial Bench (RMB),37.550797,-121.964198,1 Sailway Dr,Fremont,CA,94538, USA,RMB,1
 8bc9e33b34e5401794c03790d505916b.16,,Sabercat Creek,37.528102,-121.931448,Paseo Padre Pkwy,Fremont,CA,94539, USA,Sabercat,1
 7fa555ebd83d4ad49ef390112b3ce756.16,St Edwards,Saint Edward Catholic Church,37.53967,-122.027889,5788 Thornton Ave,Newark,CA,94560, USA,,0
+,,Sandy A White Memorial Bench,37.54639,-121.95815,,Fremont,CA,94538,,,
 697c169373604eb6a772c0d196d37146.16,,Save life,37.573445,-121.972434,Alameda Creek Trail,Fremont,CA,94536, USA,,0
 658b0aa48dd641678d2f26b6f3300cff.16,,Sea Birds,37.522836,-122.040686,7820 Enterprise Dr,Newark,CA,94560, USA,,0
 00489afcb2ed472f875541f4d294aed2.16,,Seabreeze Park,37.577076,-122.082247,5312 Carmel Way,Union City,CA,94587, USA,SeabreezePark,1
 ,,Semo Sushi Geisha,37.535063,-121.998249,5026 Mowry Ave,Fremont,CA,94538,USA,,0
 50e759190b2d41b984d2a7c733098bf8.16,,Shell Mound,37.557553,-122.082396,Chochenyo Trail,Fremont,CA,94555, USA,,0
-b0ed4a17e7574453bc0a077ccae24b09.16,,Shih-Lan Chang Memorial Bench (SLB),37.54718,-121.957868,40720 Paseo Padre Pkwy,Fremont,CA,94538, USA,SLB,1
+b0ed4a17e7574453bc0a077ccae24b09.16,SLC,Shih-Lan Chang Memorial Bench (SLC),37.54718,-121.957868,40720 Paseo Padre Pkwy,Fremont,CA,94538, USA,SLB,1
 ,,Shirley Sisk Grove,37.524975,-122.003779,100 Newpark Mall,Newark,CA,94560,USA,Shirley,1
 30f5afd8aa8b47c79fa8e3e010c8d55b.16,,Show Business Mural (PAC Theater),37.499728,-121.971354,43917 Pacific Commons Blvd,Fremont,CA,94538, USA,,0
 0f61543fbf66427da2ee4412d5ebfb38.16,,Sikh Temple Playground,37.583532,-121.999151,398 Gurdwara Rd,Fremont,CA,94536, USA,,0
@@ -352,6 +354,7 @@ ce5bb46afd524bb7a4a9e76f6b3da22a.12,Warm Springs Post Office,US Post Office (War
 1523cb7a503344aaacf2f792cc165dab.16,Chase,Utility Box Against Human Trafficking (Chase),37.551883,-121.97827,39349 Paseo Padre Pkwy,Fremont,CA,94538, USA,,0
 9d6edc74e3c642d2a32afd317e118ee5.16,,Vallejo Home Site,37.533474,-121.920267,123 Washington Blvd,Fremont,CA,94539, USA,,0
 1756714c635e4d8abb566c95ae757d1d.16,,Vallejo Mill Historical Park,37.576905,-121.97153,CA-84,Fremont,CA,94536, USA,,0
+,,Verizon - PAC,37.505666,-121.969363,43502 Christy St,Fremont,CA,94538,USA,,
 0943990b12a14040aeecaacd797d1c93.11,,Veterans Memorial Flags,37.584783,-122.074858,4453 Lisa Dr,Union City,CA,94587, USA,,1
 98fd2a4da8e441bea54d5362f4ba0435.16,VMP,Veterans Memorial Park - Fremont (VMP),37.551425,-121.977829,3100-3180 Walnut Ave,Fremont,CA,94538, USA,VMP,1
 ,VMPUC,Veterans Memorial Park - Union City (VMPUC),37.58246,-122.076257,4585-4599 Dyer St,Union City,CA,94587,USA,,1
@@ -374,4 +377,3 @@ eb90983e462042519cc4659546185e10.16,,Watkin's Hall established 1889,37.529221,-1
 50b942b0b90f48bebaa2135bcfabc012.16,,William Cann Memorial Redwood Grove,37.589039,-122.045918,33044 Marsh Hawk Rd,Union City,CA,94587, USA,WCannRedwood,1
 ,,William Cann Neighborhood Park,37.588538,-122.044628,,Union City,CA,94587,USA,,1
 ,,Words in Nature,37.473397,-121.941218,Near 3500 Gateway Blvd,Fremont,CA,94538,USA,,0
-,,Verizon - PAC,37.505666,-121.969363,43502 Christy St,Fremont,CA,94538,USA,,
