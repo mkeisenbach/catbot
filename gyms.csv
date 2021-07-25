@@ -191,6 +191,7 @@ f72ab91f0e0841849255255d8050430e.16,LDS,LDS Church,37.535513,-122.043607,36318 H
 999a350a8a7047eba420e3e362058442.12,,Leal Tank House,37.556981,-122.04782,Lake Blvd,Fremont,CA,94555, USA,,0
 6c59a726558b4a03ab7ec938a17eaab3.16,,Leland Stanford Winery,37.503574,-121.911825,1456-1622 Stanford Ave,Fremont,CA,94539, USA,,0
 ,,Liberty Park Playground,37.593131,-122.079448,3898-3800 Amy Pl,Union City,CA,94587,USA,,0
+,,Lighthouse,37.606491,-122.068334,2525 Whipple Rd,Hayward,CA,94544,USA,,
 95ad675db77f4ab8aa53a4cd6be6187c.16,,Lighthouse Bible Fellowship,37.56879,-121.97028,300 Mowry Ave,Fremont,CA,94536, USA,,0
 0ae465ed19544257b0d7a7910d2fe590.16,,"Lion Fountain, CA Nursery Historical Park",37.579593,-121.991705,36385-36501 Niles Blvd,Fremont,CA,94536, USA,LionFountain,1
 ,,Living Hope Church,37.528328,-122.034514,7160 Graham Ave,Newark,CA,94560,USA,,0
@@ -271,7 +272,8 @@ de87947062144ffcae6e26dc5d9a3944.16,,Pacific Research Center,37.539483,-122.0646
 88234eed7ead451daf494b9d08f8ba23.16,,Peregrine Park,37.577984,-122.059071,33246-33288 Falcon Dr,Fremont,CA,94555, USA,,1
 ,,Phillip Bauer Park,37.530808,-121.947277,Villa Savona Ct,Fremont,CA,94539,USA,,
 fdcff8f558b54ec58583dfe99ae8d69f.12,,Pioneer Schoolhouse & Chapel,37.563633,-121.9873,38100-38134 Temple Way,Fremont,CA,94536, USA,,0
-6e62a0acada34e808dcb05d73ef80ce7.16,,Playground,37.602369,-122.078494,30688-30698 Tidewater Dr,Union City,CA,94587, USA,,1
+,,Playground (Amy Pl),37.593131,-122.079448,near 3898-3800 Amy Pl,Union City,CA,94587,USA,,
+6e62a0acada34e808dcb05d73ef80ce7.16,,Playground (Tidewater Dr),37.602369,-122.078494,30688-30698 Tidewater Dr,Union City,CA,94587, USA,,1
 113a4d1333a84053a756b0236b48f1f6.16,,Plomosa Park South,37.467064,-121.909692,48800-48844 Gamay Dr,Fremont,CA,94539, USA,,0
 86f8b20e5f474e90987876ef9de7e9f9.16,,Pod of Dolphins,37.465821,-121.933051,48389Fremont Blvd,Fremont,CA,94538, USA,,0
 ac8d5c42f4bb44ce80d75bccdf3b3a64.16,,Primera Iglesia Baustista Church,37.595504,-122.02049,33933 10th St,Union City,CA,94587, USA,,0
@@ -354,8 +356,8 @@ ce5bb46afd524bb7a4a9e76f6b3da22a.12,Warm Springs Post Office,US Post Office (War
 1523cb7a503344aaacf2f792cc165dab.16,Chase,Utility Box Against Human Trafficking (Chase),37.551883,-121.97827,39349 Paseo Padre Pkwy,Fremont,CA,94538, USA,,0
 9d6edc74e3c642d2a32afd317e118ee5.16,,Vallejo Home Site,37.533474,-121.920267,123 Washington Blvd,Fremont,CA,94539, USA,,0
 1756714c635e4d8abb566c95ae757d1d.16,,Vallejo Mill Historical Park,37.576905,-121.97153,CA-84,Fremont,CA,94536, USA,,0
-,,Verizon - PAC,37.505666,-121.969363,43502 Christy St,Fremont,CA,94538,USA,,
 ,,Verizon - Fremont Hub,37.54515,-121.99001,39055 Fremont Hub,Fremont,CA,94538,USA,,
+,,Verizon - PAC,37.505666,-121.969363,43502 Christy St,Fremont,CA,94538,USA,,
 ,,Verizon - Union Landing,37.6031,-122.06838,30935 Courthouse Dr Spc 1,Union City,CA,94587, USA,,
 0943990b12a14040aeecaacd797d1c93.11,,Veterans Memorial Flags,37.584783,-122.074858,4453 Lisa Dr,Union City,CA,94587, USA,,1
 98fd2a4da8e441bea54d5362f4ba0435.16,VMP,Veterans Memorial Park - Fremont (VMP),37.551425,-121.977829,3100-3180 Walnut Ave,Fremont,CA,94538, USA,VMP,1
@@ -379,4 +381,3 @@ eb90983e462042519cc4659546185e10.16,,Watkin's Hall established 1889,37.529221,-1
 50b942b0b90f48bebaa2135bcfabc012.16,,William Cann Memorial Redwood Grove,37.589039,-122.045918,33044 Marsh Hawk Rd,Union City,CA,94587, USA,WCannRedwood,1
 ,,William Cann Neighborhood Park,37.588538,-122.044628,,Union City,CA,94587,USA,,1
 ,,Words in Nature,37.473397,-121.941218,Near 3500 Gateway Blvd,Fremont,CA,94538,USA,,0
-,,Lighthouse,37.606491,-122.068334,2525 Whipple Rd,Hayward,CA,94544,USA,,
